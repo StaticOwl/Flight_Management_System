@@ -33,7 +33,7 @@ function App() {
     <GlobalProvider>
       <Router>
         <div className="app-container">
-          <Navigation isLoggedIn={isLoggedIn} />
+          <Navigation isLoggedIn={isLoggedIn}/>
           <div className="content">
             <Routes>
               <Route path="/users" element={isLoggedIn ? <Users /> : <Navigate to="/login" replace />} />

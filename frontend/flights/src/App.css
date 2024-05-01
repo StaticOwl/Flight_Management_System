@@ -138,5 +138,56 @@ html, body {
   background-color: #004494;
 }
 
+/* In your App.css or a dedicated stylesheet */
+
+.user-dashboard {
+  font-family: Arial, sans-serif;
+  margin: 20px;
+  padding: 20px;
+  border-radius: 8px;
+  background-color: #f4f4f4;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.user-dashboard h2 {
+  color: #333;
+}
+
+.user-dashboard table {
+  width: 100%;
+  margin-top: 20px;
+  border-collapse: collapse;
+}
+
+.user-dashboard table, .user-dashboard th, .user-dashboard td {
+  border: 1px solid #ccc;
+}
+
+.user-dashboard th, .user-dashboard td {
+  text-align: left;
+  padding: 8px;
+}
+
+.user-dashboard th {
+  background-color: #eee;
+}
+
+.user-dashboard tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.user-dashboard tr:hover {
+  background-color: #f1f1f1;
+}
+
+.detail-row {
+  cursor: pointer;
+}
+
+.detail-info {
+  background-color: #f0f0f0;
+  padding-left: 20px;
+}
+
 
 /* Add additional styles for the navigation bar as needed */

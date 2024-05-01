@@ -50,6 +50,7 @@ class Flight(db.Model):
     arrival_time = db.Column(db.DateTime, nullable=False)
     aircraft_type = db.Column(db.String(50), nullable=False)
     num_seats = db.Column(db.Integer, nullable=False)
+    price_per_seat = db.Column(db.Float, nullable=True)
     airline = relationship('Airline', back_populates='flights')
     booking_details = relationship('BookingDetail', back_populates='flight')
     flight_crew_assignments = relationship('FlightCrewAssignment', back_populates='flight')

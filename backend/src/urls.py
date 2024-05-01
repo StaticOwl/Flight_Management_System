@@ -19,7 +19,10 @@ from src.controllers import (
     delete_user_account_controller,
     remove_outdated_data_controller,
     get_crew_assignment_controller,
-    login_controller
+    login_controller,
+    get_user_id_from_token,
+    set_token_user_id,
+    fetch_airlines
 )
 
 # List all entities
@@ -36,12 +39,22 @@ def login():
 def create_user():
     return create_user_controller()
 
-@app.route("/users/<int:user_id>", methods=['GET', 'PUT'])
-def user_operations(user_id):
+@app.route("/users", methods=['GET', 'PUT'])
+def user_operations():
+    token = request.headers.get('Authorization').split(' ')[1]
     if request.method == 'GET':
-        return get_user_profile_controller(user_id)
+        return get_user_profile_controller(token)
     elif request.method == 'PUT':
-        return update_user_profile_controller(user_id)
+        return update_user_profile_controller(token)
+    
+@app.route("/token", methods=['GET'])
+def getUserIdFromToken():
+    token = request.headers.get('Authorization').split(' ')[1]
+    return get_user_id_from_token(token)
+
+@app.route("/gettoken/<int:user_id>", methods=['GET'])
+def getToken(user_id):
+    return set_token_user_id(user_id)
 
 # Booking endpoints
 @app.route("/createbooking", methods=['POST'])
@@ -55,9 +68,10 @@ def booking_operations(booking_id):
     elif request.method == 'DELETE':
         return cancel_booking_controller(booking_id)
 
-@app.route("/users/<int:user_id>/bookings", methods=['GET'])
-def user_bookings(user_id):
-    return get_booking_history_controller(user_id)
+@app.route("/users/bookings", methods=['GET'])
+def user_bookings():
+    token = request.headers.get('Authorization').split(' ')[1]
+    return get_booking_history_controller(token)
 
 # Flight endpoints
 @app.route("/flights", methods=['POST'])
@@ -100,6 +114,13 @@ def admin_cleanup():
 def delete_user(user_id):
     return delete_user_account_controller(user_id)
 
+@app.route("/airlines", methods=['GET'])
+def get_airlines():
+    return fetch_airlines()
+
+@app.route("/flights_by_airlines/<airline_id>")
+def fetch_flights_by_airline_id(airline_id):
+    return fetch_airlines(airline_id)
 # Generic error for unsupported methods at any endpoint
 @app.errorhandler(405)
 def method_not_allowed(e):

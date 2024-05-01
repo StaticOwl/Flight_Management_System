@@ -1,175 +1,265 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ApiService from '../api/ApiService';
+import { useNavigate } from 'react-router-dom';
+import '../App.css';  // Make sure this is correctly linked
 
 function Users() {
     const [user, setUser] = useState({
-        firstName: '',
-        lastName: '',
+        first_name: '',
+        last_name: '',
         email: '',
-        password: '',
         phone: '',
-        address: ''
+        address: '',
+        password: ''
     });
-    const [userId, setUserId] = useState('');
+    const [bookings, setBookings] = useState([]);
+    const [expanded, setExpanded] = useState(null);
     const [message, setMessage] = useState('');
-    const [userDetailsVisible, setUserDetailsVisible] = useState(0);
+    const [airlines, setAirlines] = useState([]);
+    const [selectedAirline, setSelectedAirline] = useState('');
+    const [flights, setFlights] = useState([]);
+    const [selectedFlight, setSelectedFlight] = useState('');
+    const [newBooking, setNewBooking] = useState({
+        booking_date: '',
+        num_passengers: 1
+    });
+    const [totalCost, setTotalCost] = useState(-10.0)
+    const [updateData, setUpdateData] = useState(true)
+    const navigate = useNavigate();
 
-    const resetData = () => {
-        setUser({
-            firstName: '',
-            lastName: '',
-            email: '',
-            password: '',
-            phone: '',
-            address: ''
-        });
-        setUserId('');
-        setMessage('');
-        setUserDetailsVisible(0);
-    }
+    useEffect(() => {
+        const fetchUserData = async () => {
+            try {
+                await fetchUserDetails();
+                await fetchUserBookings();
+                await fetchAirlines();
+            } catch (error) {
+                setMessage('Error fetching data: ' + error.message);
+                navigate('/login');
+            }
+        };
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setUser(prevState => ({ ...prevState, [name]: value }));
-    };
+        if (updateData){
+            fetchUserData();
+            setUpdateData(false);
+        }
+    }, [updateData]);
 
-    const handleCreateUser = async () => {
+    useEffect(() => {
+        if (selectedAirline) {
+            fetchFlights(selectedAirline);
+        }
+        else {
+            setFlights([]);
+            setSelectedAirline('');
+        }
+    }, [selectedAirline]);
+
+    useEffect(() => {
+        if (selectedFlight && newBooking.num_passengers > 0 && newBooking.booking_date) {
+            const flight = flights.find(f => f.flight_number === selectedFlight);
+            if (flight && flight.price_per_seat) {
+                const dateCostAdjustment = calculateDateCostAdjustment(newBooking.booking_date);
+                setTotalCost(flight.price_per_seat * newBooking.num_passengers + dateCostAdjustment);
+            }
+        }
+    }, [selectedFlight, newBooking.num_passengers, newBooking.booking_date, flights]);
+
+    const fetchFlights = async (airlineId) => {
         try {
-            const response = await ApiService.createUser(user);
-            setMessage(`User Created: ${JSON.stringify(response.data)}`);
+            const flightsResponse = await ApiService.getFlightsByAirline(airlineId);
+            setFlights(flightsResponse);
+            setSelectedFlight(flightsResponse[0]?.flight_number);  // Automatically select the first flight
         } catch (error) {
-            setMessage('Error creating user: ' + error.message);
+            setMessage('Error fetching flights: ' + error.message);
         }
     };
 
-    const callCreateUser = () => {
-        setUser({
-            first_name: '',
-            last_name: '',
-            email: '',
-            password: '',
-            phone: '',
-            address: ''
-        });
-        setUserDetailsVisible(5);
-        setMessage('Create a New User');
-    };
-
-    const callFetchUser = () => {
-        setUserDetailsVisible(2);
-        setMessage('Fetching User Data');
-    };
-    const callUpdateUser = () => {
-        setMessage('Update the Data In Place');
-        setUserDetailsVisible(4);
-    };
-
-    const handleGetUser = async () => {
-        try {
-            const response = await ApiService.getUser(userId);
-            setUser(response.data);
-            setMessage('User data fetched successfully');
-            setUserDetailsVisible(3); // Set a state variable to indicate that user details should be displayed
-        } catch (error) {
-            const errorMessage = error.response ? error.response.data.message : error.message;
-            setMessage('Error fetching user data: ' + errorMessage);
-            console.error('Error:', error); // Log the error details to console
-        }
+    const calculateDateCostAdjustment = (date) => {
+        if (!date) return 0;
+        const digits = date.split('-').join(''); // Remove '-' and concatenate
+        const sum = digits.split('').reduce((acc, digit) => acc + parseInt(digit, 10), 0);
+        return sum / 1.5;
     };
     
 
-    const handleUpdateUser = async () => {
+    const fetchAirlines = async () => {
         try {
-            await ApiService.updateUser(userId, user);
-            setMessage('User updated successfully');
+            const response = await ApiService.getAirlines();
+            setAirlines(response);
+            setSelectedAirline('');
         } catch (error) {
-            setMessage('Error updating user: ' + error.message);
+            setMessage('Error fetching airlines: ' + error.message);
         }
     };
 
-    const handleDeleteUser = async () => {
-        const confirmed = window.confirm('This can\'t be undone. Are you sure you want to delete this user?');
-        if (!confirmed) {
-            return;
-        }
+    const fetchUserDetails = async () => {
         try {
-            await ApiService.deleteUser(userId);
-            setMessage('User deleted successfully');
-            setUser({
-                first_name: '',
-                last_name: '',
-                email: '',
-                password: '',
-                phone: '',
-                address: ''
-            }); // Clear the form after deletion
+            const response = await ApiService.getUser();
+            setUser(response);
+            setMessage('User data fetched successfully');
         } catch (error) {
-            setMessage('Error deleting user: ' + error.message);
+            setMessage('Error fetching user data: ' + error.message);
         }
     };
 
-    const form = () => {
-        return (
-            <div>
-                <input type="text" name="firstName" value={user.first_name} onChange={handleChange} placeholder="First Name" />
-                <input type="text" name="lastName" value={user.last_name} onChange={handleChange} placeholder="Last Name" />
-                <input type="email" name="email" value={user.email} onChange={handleChange} placeholder="Email" />
-                <input type="password" name="password" value={user.password} onChange={handleChange} placeholder="Password" />
-                <input type="text" name="phone" value={user.phone} onChange={handleChange} placeholder="Phone" />
-                <input type="text" name="address" value={user.address} onChange={handleChange} placeholder="Address" />
-            </div>
-        );
-    }
+    const fetchUserBookings = async () => {
+        try {
+            const response = await ApiService.getUserBookings();
+            if (response === null){
+                setMessage("No Booking Found.")
+            }
+            else{
+                const length = response.length;
+                setBookings(response);
+                setMessage(`${length} ${length == 1 ? "booking" : "bookings"} fetched successfully`);
+            }
+        } catch (error) {
+            setMessage('Error fetching bookings: ' + error.message);
+        }
+    };
+
+    const toggleDetails = index => {
+        setExpanded(expanded === index ? null : index);
+    };
+
+    const handleCreateBooking = async (event) => {
+        event.preventDefault();
+        try {
+            if (!selectedAirline || !selectedFlight || !newBooking.booking_date || newBooking.num_passengers <= 0) {
+                setMessage('Please fill in all fields to create a booking.');
+                return;
+            }
+
+            const selectedFlightId = flights.find(f => f.flight_number === selectedFlight).id;
+
+            console.log(selectedFlightId)
+    
+            // Prepare the data to send to the backend
+            const bookingData = {
+                airline_id: selectedAirline,
+                flight_id: selectedFlightId,
+                booking_date: newBooking.booking_date,
+                num_passengers: newBooking.num_passengers,
+                total_cost: totalCost,
+                token: localStorage.getItem('token') // Use the calculated total cost
+            };
+    
+            // API call to create the booking
+            const response = await ApiService.createBooking(bookingData);
+            console.log(response)
+            if (response && response.booking_id) {  // Assuming your API returns the created booking with an 'id'
+                setMessage(`Booking created successfully. Keep the Booking ID ${response.booking_id} for reference.`);
+                // Reset the booking form state
+                setNewBooking({ booking_date: '', num_passengers: 1 });
+                setUpdateData(true)
+                setTotalCost(0);
+            } else {
+                setMessage('Failed to create booking.');
+            }
+        } catch (error) {
+            setMessage(`Error creating booking: ${error.message}`);
+        }
+    };
+
+    const handleDeleteBooking = async (bookingId) => {
+        try {
+            console.log(bookingId)
+            const response = await ApiService.deleteBooking(bookingId);
+            console.log(response)
+            console.log(response.success)
+            if (response.success) {
+                setBookings(bookings.filter(booking => booking.id !== bookingId)); // Remove the booking from the list
+                setMessage('Booking deleted successfully');
+            } else {
+                setMessage('Error deleting booking: ' + response.message);
+            }
+        } catch (error) {
+            setMessage('Error deleting booking: ' + error.message);
+        }
+    };
 
     return (
-        <div>
-            <h2>User Operations</h2>
-            {/* <button onClick={history.back()}>Create User</button> */}
-            <button onClick={callCreateUser}>Create User</button>
-            <button onClick={callFetchUser}>Fetch User Data</button>
-            <button onClick={resetData}>Reset</button>
-            <p>{message}</p>
-            {userDetailsVisible==2 && (
-               <div> 
-                    <div>
-                        <input type="text" value={userId} onChange={e => setUserId(e.target.value)} placeholder="Enter User ID to operate on" />
-                        <button onClick={handleGetUser}>Fetch User Data</button>
-                    </div>
-                </div> 
-            )}
+        <div className="user-dashboard">
+            <h2>Dashboard</h2>
             <div>
-                {userDetailsVisible==3 && (
-                <div>    
-                    <div>
-                        <h2>User Details</h2>
-                        <p>First Name: {user.first_name}</p>
-                        <p>Last Name: {user.last_name}</p>
-                        <p>Email: {user.email}</p>
-                    {/* Add other user details as needed */}
-                    </div>
-                    <div>
-                        <button onClick={callUpdateUser}>Update User Profile</button>
-                        <button onClick={handleDeleteUser}>Delete User Account</button>
-                    </div>
-                </div>
-                )}
+                <h3>Personal Details:</h3>
+                <p>First Name: {user.first_name}</p>
+                <p>Last Name: {user.last_name}</p>
+                <p>Email: {user.email}</p>
+                <p>Phone: {user.phone}</p>
+                <p>Address: {user.address}</p>
             </div>
-            {(userDetailsVisible === 4 || userDetailsVisible === 5) && (
+            <form onSubmit={handleCreateBooking}>
+                <h3>Create New Booking</h3>
+                <select value={selectedAirline} onChange={e => setSelectedAirline(e.target.value)} required>
+                    <option value="" disabled>Select Airline</option>
+                    {airlines.map((airline) => (
+                        <option key={airline.id} value={airline.id}>
+                            {airline.name}
+                        </option>
+                    ))}
+                </select>
+                <select value={selectedFlight} onChange={e => setSelectedFlight(e.target.value)} required disabled={!selectedAirline}>
+                    <option value="" disabled>{selectedAirline ? 'Select Flight' : 'Select an Airline first'}</option>
+                    {flights.map(flight => (
+                        <option key={flight.id} value={flight.flight_number}>
+                            {flight.flight_number} - {flight.departure_airport} to {flight.arrival_airport}
+                        </option>
+                    ))}
+                </select>
+                <input type="date" value={newBooking.booking_date} onChange={e => setNewBooking({ ...newBooking, booking_date: e.target.value })} placeholder="Booking Date" />
+                <input type="number" value={newBooking.num_passengers} onChange={e => setNewBooking({ ...newBooking, num_passengers: e.target.value })} placeholder="Number of Passengers" />
+                <p>Total Cost: {totalCost >= 0.0 ? totalCost.toFixed(2): "Not Fixed Yet"}</p>
+                <button type="submit">Create Booking</button>
+            </form>
             <div>
-                <div>
-                    {form()}
-                </div>
-                {userDetailsVisible == 4 && (
-                    <div>
-                        <button onClick={handleUpdateUser}>Submit Changes</button>
-                    </div>
-                )}
-                {userDetailsVisible == 5 && (
-                    <div>
-                        <button onClick={handleCreateUser}>Create New User</button>
-                    </div>
-                )}
-            </div>)}
+                <h3>Bookings:</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Flight Number</th>
+                            <th>Airline</th>
+                            <th>Route</th>
+                            <th>Arrival</th>
+                            <th>Departure</th>
+                            <th>Booking For</th>
+                            <th>Total Cost</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {bookings.map((booking, index) => (
+                            <>
+                                <tr key={index} onClick={() => toggleDetails(index)} className="detail-row">
+                                    <td>{booking.bookings.booking_date}</td>
+                                    <td>{booking.bookings.flight.flight_number}</td>
+                                    <td>{booking.bookings.flight.airline.airline_name}</td>
+                                    <td>{booking.bookings.flight.departure_airport} to {booking.bookings.flight.arrival_airport}</td>
+                                    <td>{booking.bookings.flight.arrival_time}</td>
+                                    <td>{booking.bookings.flight.departure_time}</td>
+                                    <td>{booking.bookings.num_passengers}</td>
+                                    <td>${booking.bookings.total_cost}</td>
+                                    <button onClick={() => handleDeleteBooking(booking.bookings.booking_id)}>Delete</button>
+                                </tr>
+                                {expanded === index && (
+                                    <tr>
+                                        <td colSpan="8" className="detail-info">
+                                            AirCraft_Type : {booking.bookings.flight.aircraft_type}<br/>
+                                            Airline's Support : <a href={`mailto:${booking.bookings.flight.airline.contact_email}`}> Mail </a> 
+                                            or <a href={`tel:${booking.bookings.flight.airline.contact_phone}`}>Call</a><br/>
+                                            AirCraft Type : {booking.bookings.flight.aircraft_type}<br/>
+                                            Total Passengers: {booking.bookings.flight.num_seats}<br/>
+                                        </td>
+                                    </tr>
+                                )}
+                            </>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+            <p>{message}</p>
         </div>
     );
 }
