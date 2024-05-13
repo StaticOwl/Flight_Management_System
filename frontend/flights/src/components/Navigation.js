@@ -9,10 +9,9 @@ const Navigation = ({ isLoggedIn }) => {
   const [userId, setUserId] = useState(0);
 
   const handleLogout = (event) => {
-    event.preventDefault();  // Prevent the link from navigating
-    localStorage.removeItem('token');  // Remove the token from local storage
-    // setIsLoggedIn(false);  // Update the state to false
-    window.dispatchEvent(new Event('authChange'));  // Navigate to login page
+    event.preventDefault(); 
+    localStorage.removeItem('token'); 
+    window.dispatchEvent(new Event('authChange')); 
     Navigate('/login');
   };
 
@@ -31,7 +30,7 @@ const Navigation = ({ isLoggedIn }) => {
 
       fetchUserId();
     }
-  }, [isLoggedIn]);
+  }, [isLoggedIn, userId]);
 
 
   return (
@@ -43,7 +42,6 @@ const Navigation = ({ isLoggedIn }) => {
             <li><Link to="/users">{localStorage.getItem('user')}'s DashBoard</Link></li>
             <li><Link to="/flights">Flights</Link></li>
             <li><Link to="/crews">Crews</Link></li>
-            <li><Link to="/airports">Airports</Link></li>
             <li><a href="/logout" onClick={handleLogout}>Logout</a></li>
           </>
         )}

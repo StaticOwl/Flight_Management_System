@@ -22,7 +22,12 @@ from src.controllers import (
     login_controller,
     get_user_id_from_token,
     set_token_user_id,
-    fetch_airlines
+    fetch_airlines,
+    get_crews,
+    add_crew_controller,
+    update_crew_controller,
+    fetch_flights_controller,
+    fetch_roles_controller
 )
 
 # List all entities
@@ -41,10 +46,12 @@ def create_user():
 
 @app.route("/users", methods=['GET', 'PUT'])
 def user_operations():
+    print(request.headers)
     token = request.headers.get('Authorization').split(' ')[1]
     if request.method == 'GET':
         return get_user_profile_controller(token)
     elif request.method == 'PUT':
+        print(request.get_json())
         return update_user_profile_controller(token)
     
 @app.route("/token", methods=['GET'])
@@ -74,7 +81,7 @@ def user_bookings():
     return get_booking_history_controller(token)
 
 # Flight endpoints
-@app.route("/flights", methods=['POST'])
+@app.route("/createflights", methods=['POST'])
 def create_flight():
     return create_flight_controller()
 
@@ -83,11 +90,8 @@ def search_flights():
     return search_flights_controller()
 
 @app.route("/flights/<int:flight_id>", methods=['PUT'])
-def update_flight(flight_id):
-    return update_flight_schedule_controller(flight_id)
-
-# Crew endpoints
-@app.route("/crew", methods=['POST'])
+def update_flight(flight_id):fetch_roles_controller
+@app.route("/addcrew", methods=['POST'])
 def create_crew():
     return create_crew_controller()
 
@@ -106,10 +110,7 @@ def airline_dashboard(airline_id):
 
 # Administrative deletion of outdated data
 @app.route("/admin/cleanup", methods=['DELETE'])
-def admin_cleanup():
-    return remove_outdated_data_controller()
-
-# Account deletion
+def admin_cleanup():fetch_roles_controller
 @app.route("/users/<int:user_id>/delete", methods=['DELETE'])
 def delete_user(user_id):
     return delete_user_account_controller(user_id)
@@ -122,6 +123,27 @@ def get_airlines():
 def fetch_flights_by_airline_id(airline_id):
     return fetch_airlines(airline_id)
 # Generic error for unsupported methods at any endpoint
+
+@app.route("/getCrew", methods=['GET'])
+def getCrew():
+    return get_crews()
+
+@app.route("/addCrew", methods=['POST'])
+def addCrew():
+    return add_crew_controller()
+
+@app.route('/update-crew/<int:crew_id>', methods=['PUT'])
+def updateCrew(crew_id):
+    return update_crew_controller(crew_id)
+
+@app.route("/flights", methods=['GET'])
+def fetch_flights():
+    return fetch_flights_controller()
+
+@app.route("/roles", methods=['GET'])
+def fetch_roles():
+    return fetch_roles_controller()
+
 @app.errorhandler(405)
 def method_not_allowed(e):
     return "Method is Not Allowed", 405

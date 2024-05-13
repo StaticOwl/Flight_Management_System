@@ -141,53 +141,198 @@ html, body {
 /* In your App.css or a dedicated stylesheet */
 
 .user-dashboard {
-  font-family: Arial, sans-serif;
-  margin: 20px;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  margin: 20px auto;
   padding: 20px;
   border-radius: 8px;
-  background-color: #f4f4f4;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  background-color: #ffffff; /* Light background for better readability */
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15); /* Slightly deeper shadow for more depth */
+  width: 90%; /* Restrict width and center align for better structure */
+  max-width: 1200px; /* Maximum width to ensure content is not too stretched */
 }
 
 .user-dashboard h2 {
-  color: #333;
+  color: #2c3e50; /* Darker shade for better contrast */
+  border-bottom: 2px solid #ecf0f1; /* Subtle line under the header */
+  padding-bottom: 10px; /* Space below the line */
 }
 
 .user-dashboard table {
   width: 100%;
   margin-top: 20px;
-  border-collapse: collapse;
-}
-
-.user-dashboard table, .user-dashboard th, .user-dashboard td {
-  border: 1px solid #ccc;
+  border-collapse: collapse; /* Ensures borders between cells are shared */
 }
 
 .user-dashboard th, .user-dashboard td {
+  border: 1px solid #dcdcdc; /* Lighter border color */
   text-align: left;
-  padding: 8px;
+  padding: 12px; /* More padding for better spacing */
 }
 
 .user-dashboard th {
-  background-color: #eee;
+  background-color: #e8e8e8; /* Slightly darker background for header */
+  color: #333; /* Dark color for text for contrast */
 }
 
 .user-dashboard tr:nth-child(even) {
-  background-color: #f9f9f9;
+  background-color: #f8f8f8; /* Lighter color for even rows */
 }
 
 .user-dashboard tr:hover {
-  background-color: #f1f1f1;
+  background-color: #f0f0f0; /* Hover effect for row highlight */
 }
 
 .detail-row {
-  cursor: pointer;
+  cursor: pointer; /* Cursor to pointer to indicate it's clickable */
 }
 
 .detail-info {
-  background-color: #f0f0f0;
-  padding-left: 20px;
+  background-color: #f6f6f6; /* Slightly different background for detail rows */
+  padding: 10px 20px; /* More padding for emphasis */
+  font-style: italic; /* Style detail text to differentiate */
+}
+
+.user-dashboard select {
+  padding: 8px;
+  border: 1px solid #dcdcdc;
+  border-radius: 4px;
+}
+
+.user-dashboard input[type="date"] {
+  padding: 8px;
+  border: 1px solid #dcdcdc;
+  border-radius: 4px;
+}
+.user-dashboard input[type="number"] {
+  padding: 8px;
+  border: 1px solid #dcdcdc;
+  border-radius: 4px;
 }
 
 
+
+
 /* Add additional styles for the navigation bar as needed */
+/* General Styles for Flight Management */
+.flight-management-container {
+  margin: 20px;
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  width: 80%;
+  align-self: center;
+}
+
+.flight-management-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.flight-management-header h2 {
+  margin: 0;
+}
+
+.flight-management-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.flight-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.flight-table th, .flight-table td {
+  text-align: left;
+  padding: 8px;
+  border-bottom: 1px solid #ccc;
+}
+
+.flight-table th {
+  background-color: #e9ecef;
+}
+
+.flight-form-input {
+  padding: 8px;
+  margin-right: 5px;
+  width: 100%;
+}
+
+.flight-form-button {
+  padding: 8px 16px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.flight-form-button:hover {
+  background-color: #0056b3;
+}
+
+.error-message {
+  color: red;
+  margin-top: 10px;
+}
+
+
+.crew-dashboard {
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  margin: 20px auto;
+  padding: 20px;
+  border-radius: 8px;
+  background-color: #ffffff;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  width: 80%;
+  max-width: 800px;
+}
+
+.crew-dashboard h2 {
+  color: #2c3e50;
+  border-bottom: 2px solid #ecf0f1;
+  padding-bottom: 10px;
+}
+
+.crew-dashboard table {
+  width: 100%;
+  margin-top: 20px;
+  border-collapse: collapse;
+}
+
+.crew-dashboard th, .crew-dashboard td {
+  border: 1px solid #dcdcdc;
+  padding: 12px;
+  text-align: left;
+}
+
+.crew-dashboard th {
+  background-color: #e8e8e8;
+  color: #333;
+}
+
+.crew-dashboard tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+.crew-dashboard tr:hover {
+  background-color: #f0f0f0;
+}
+
+.crew-dashboard button {
+  cursor: pointer;
+  padding: 8px 16px;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+.crew-dashboard button:hover {
+  background-color: #2980b9;
+}
+

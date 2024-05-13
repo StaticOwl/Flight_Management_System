@@ -24,8 +24,21 @@ const getUser = async() => {
     }
 };
 
-const updateUser = (userId, userData) => {
-    return axios.put(`${API_BASE_URL}/users/${userId}`, userData);
+const updateUser = async (user) => {
+    try{
+        const token = localStorage.getItem('token')
+        const response = await axios.put(`${API_BASE_URL}/users`, user, {
+            headers:{
+                'Content-Type':'application/json',
+                Authorization : `Bearer ${token}`
+            }
+        });
+        return response.success;
+    }
+    catch(error){
+        console.error('Error Updating Data:', error);
+        return false;
+    }
 };
 
 const deleteUser = (userId) => {
@@ -91,6 +104,34 @@ const getFlightsByAirline = async(airlineId) => {
     return await response.json();
 }
 
+
+const getCrews = async() => {
+    const response = await fetch(`${API_BASE_URL}/getCrew`);
+    return await response.json();
+}
+
+const addCrew = async(crewData) => {
+    const response = await fetch(`${API_BASE_URL}/addCrew`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify(crewData)
+    });
+    return await response.json();
+}
+
+const getFlights = async() => {
+    const response = await fetch(`${API_BASE_URL}/flights`);
+    return await response.json();
+}
+
+const getRoles = async() => {
+    const response = await fetch(`${API_BASE_URL}/roles`);
+    return await response.json();
+}
+
 export default {
     createUser,
     getUser,
@@ -102,5 +143,9 @@ export default {
     createBooking,
     deleteBooking,
     getAirlines,
-    getFlightsByAirline
+    getFlightsByAirline,
+    getCrews,
+    getFlights,
+    getRoles,
+    addCrew
 };

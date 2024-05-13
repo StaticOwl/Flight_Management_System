@@ -7,6 +7,8 @@ import Register from './components/Register';
 import Home from './components/Home';
 import Navigation from './components/Navigation';
 import './App.css';
+import Flights from './components/Flights';
+import Crews from './components/Crews';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -27,7 +29,7 @@ function App() {
 
     // Cleanup listener on component unmount
     return () => window.removeEventListener('authChange', updateLoginStatus);
-  }, []);  // Still empty because the handler itself handles updates
+  }, [isLoggedIn]);  // Still empty because the handler itself handles updates
 
   return (
     <GlobalProvider>
@@ -37,9 +39,11 @@ function App() {
           <div className="content">
             <Routes>
               <Route path="/users" element={isLoggedIn ? <Users /> : <Navigate to="/login" replace />} />
+              <Route path="/flights" element={<Flights/>} />
               <Route path="/login" element={isLoggedIn ? <Navigate to="/" replace /> : <Login />} />
               <Route path="/register" element={isLoggedIn ? <Navigate to="/" replace /> : <Register />} />
               <Route path="/" element={isLoggedIn ? <Home /> : <Navigate to="/login" replace />} />
+              <Route path="/crews" element={<Crews/>} />
             </Routes>
           </div>
         </div>

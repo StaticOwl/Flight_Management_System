@@ -12,6 +12,9 @@ function Users() {
         address: '',
         password: ''
     });
+    const [editingUser, setEditingUser] = useState(false);
+    const [showPasswordEdit, setShowPasswordEdit] = useState(false)
+    const [passwords, setPasswords] = useState({ current: '', new: '', confirm: '' });
     const [bookings, setBookings] = useState([]);
     const [expanded, setExpanded] = useState(null);
     const [message, setMessage] = useState('');
@@ -43,7 +46,7 @@ function Users() {
             fetchUserData();
             setUpdateData(false);
         }
-    }, [updateData]);
+    }, [updateData, navigate]);
 
     useEffect(() => {
         if (selectedAirline) {
@@ -112,7 +115,7 @@ function Users() {
             else{
                 const length = response.length;
                 setBookings(response);
-                setMessage(`${length} ${length == 1 ? "booking" : "bookings"} fetched successfully`);
+                setMessage(`${length} ${length === 1 ? "booking" : "bookings"} fetched successfully`);
             }
         } catch (error) {
             setMessage('Error fetching bookings: ' + error.message);
@@ -179,17 +182,85 @@ function Users() {
         }
     };
 
-    return (
-        <div className="user-dashboard">
-            <h2>Dashboard</h2>
-            <div>
-                <h3>Personal Details:</h3>
+    const handleUserEditToggle = () => {
+        setEditingUser(!editingUser);
+    };
+
+    const callPasswordToggle = () => {
+        setShowPasswordEdit(!showPasswordEdit)
+        console.log(passwords)
+    }
+
+    const handleUserUpdate = async () => {
+        if (!editingUser) {
+            return;
+        }
+        try {
+            console.log(user)
+            const response = await ApiService.updateUser(user);
+            setEditingUser(false); // Exit editing mode after update
+            if (response.success){
+                setMessage('User updated successfully');
+            }
+        } catch (error) {
+            setMessage(`Error updating user: ${error.message}`);
+        }
+    };
+
+    const handlePasswordUpdate = async () => {
+        if (passwords.new !== passwords.confirm) {
+            setMessage('Passwords do not match');
+            return;
+        }
+        try {
+            const response = await ApiService.updateUser(passwords);
+            setPasswords({ current: '', new: '', confirm: '' });
+            if (response.success){
+                setMessage('Password updated successfully');
+            }
+        } catch (error) {
+            setMessage(`Error updating password: ${error.message}`);
+        }
+    };
+
+    const renderUserDetails = () => (
+        editingUser ? (
+            <>
+                <input value={user.first_name} onChange={e => setUser({ ...user, first_name: e.target.value })} />
+                <input value={user.last_name} onChange={e => setUser({ ...user, last_name: e.target.value })} />
+                <input value={user.email} onChange={e => setUser({ ...user, email: e.target.value })} />
+                <input value={user.phone} onChange={e => setUser({ ...user, phone: e.target.value })} />
+                <input value={user.address} onChange={e => setUser({ ...user, address: e.target.value })} />
+                <button className="flight-form-button" onClick={handleUserUpdate}>Save Changes</button>
+            </>
+        ) : (
+            <>
                 <p>First Name: {user.first_name}</p>
                 <p>Last Name: {user.last_name}</p>
                 <p>Email: {user.email}</p>
                 <p>Phone: {user.phone}</p>
                 <p>Address: {user.address}</p>
-            </div>
+                <button className="flight-form-button" onClick={handleUserEditToggle}>Edit</button>
+            </>
+        )
+    );
+
+    const renderPasswordForm = () => (
+        showPasswordEdit && 
+        <form onSubmit={handlePasswordUpdate}>
+            <input type="password" value={passwords.current} onChange={e => setPasswords({ ...passwords, current: e.target.value })} placeholder="Current Password" />
+            <input type="password" value={passwords.new} onChange={e => setPasswords({ ...passwords, new: e.target.value })} placeholder="New Password" />
+            <input type="password" value={passwords.confirm} onChange={e => setPasswords({ ...passwords, confirm: e.target.value })} placeholder="Confirm New Password" />
+            <button className="flight-form-button" type="submit">Set Password</button>
+        </form>
+    );
+
+    return (
+        <div className="user-dashboard">
+            <h2>Dashboard</h2>
+            <div>{renderUserDetails()}</div>
+            {/* <button onClick={callPasswordToggle}>Update Password</button> */}
+            {renderPasswordForm()}
             <form onSubmit={handleCreateBooking}>
                 <h3>Create New Booking</h3>
                 <select value={selectedAirline} onChange={e => setSelectedAirline(e.target.value)} required>
@@ -211,7 +282,7 @@ function Users() {
                 <input type="date" value={newBooking.booking_date} onChange={e => setNewBooking({ ...newBooking, booking_date: e.target.value })} placeholder="Booking Date" />
                 <input type="number" value={newBooking.num_passengers} onChange={e => setNewBooking({ ...newBooking, num_passengers: e.target.value })} placeholder="Number of Passengers" />
                 <p>Total Cost: {totalCost >= 0.0 ? totalCost.toFixed(2): "Not Fixed Yet"}</p>
-                <button type="submit">Create Booking</button>
+                <button className="flight-form-button" type="submit">Create Booking</button>
             </form>
             <div>
                 <h3>Bookings:</h3>
@@ -241,7 +312,7 @@ function Users() {
                                     <td>{booking.bookings.flight.departure_time}</td>
                                     <td>{booking.bookings.num_passengers}</td>
                                     <td>${booking.bookings.total_cost}</td>
-                                    <button onClick={() => handleDeleteBooking(booking.bookings.booking_id)}>Delete</button>
+                                    <button className="flight-form-button" onClick={() => handleDeleteBooking(booking.bookings.booking_id)}>Delete</button>
                                 </tr>
                                 {expanded === index && (
                                     <tr>

@@ -1,9 +1,10 @@
-from flask import request, jsonify
+from flask import request, jsonify, make_response, request
 from datetime import datetime, timedelta
 from werkzeug.security import generate_password_hash, check_password_hash
 import uuid
 from . import db
 import jwt
+from sqlalchemy.exc import SQLAlchemyError
 from src.models import Airline, Flight, Crew, CrewRole, FlightCrewAssignment, Booking, BookingDetail, Passenger, Payment, User
 
 # ----------------------------------------------- #
@@ -134,6 +135,29 @@ def create_crew_controller():
     db.session.commit()
     return jsonify(crew.to_dict()), 201
 
+def update_crew_controller(crew_id):
+    data = request.get_json()
+    
+    # Find the crew member by ID
+    crew = Crew.query.get(crew_id)
+    if not crew:
+        return make_response(jsonify({"message": "Crew member not found"}), 404)
+    
+    # Update the crew member's details
+    try:
+        crew.first_name = data.get('first_name', crew.first_name)
+        crew.last_name = data.get('last_name', crew.last_name)
+        
+        # Optionally, update other fields if needed
+        # crew.flight_id = data.get('flight_id', crew.flight_id)
+        # crew.role_id = data.get('role_id', crew.role_id)
+
+        db.session.commit()
+        return jsonify(crew.to_dict()), 200
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        return make_response(jsonify({"message": "Database error", "error": str(e)}), 500)
+
 
 # Read
 def search_flights_controller():
@@ -255,13 +279,19 @@ def update_user_profile_controller(token):
     user = User.query.get(user_id)
     if not user:
         return jsonify({'message': 'User not found'}), 404
+    
+    print(data)
 
     if 'first_name' in data: user.first_name = data['first_name']
     if 'last_name' in data: user.last_name = data['last_name']
     if 'email' in data: user.email = data['email']
     if 'phone' in data: user.phone = data['phone']
     if 'address' in data: user.address = data['address']
-
+    if 'current' in data:
+        print(data['current'])
+        password = data['current']
+        if check_password_hash(user.password) == password:
+            user.password = generate_password_hash(data['new'])
     db.session.commit()
     return jsonify(user.to_dict())
 
@@ -408,3 +438,79 @@ def fetch_airlines(airline_id=None):
             "price_per_seat": flight.price_per_seat
             } for flight in flights]
         return response
+    
+def get_crews():
+    # Join the Crew, FlightCrewAssignment, Flight, and CrewRole tables to gather all related information
+    crew_assignments = db.session.query(
+        Crew.crew_id,
+        Crew.first_name,
+        Crew.last_name,
+        Flight.flight_number,
+        Flight.departure_airport,
+        Flight.arrival_airport,
+        CrewRole.role_name
+    ).join(FlightCrewAssignment, Crew.crew_id == FlightCrewAssignment.crew_id
+    ).join(Flight, Flight.flight_id == FlightCrewAssignment.flight_id
+    ).join(CrewRole, CrewRole.role_id == FlightCrewAssignment.role_id
+    ).all()
+
+    # Construct the response
+    response = [{
+        "id": assignment.crew_id,
+        "name": f"{assignment.first_name} {assignment.last_name}",
+        "flight_number": assignment.flight_number,
+        "departure_airport": assignment.departure_airport,
+        "arrival_airport": assignment.arrival_airport,
+        "role": assignment.role_name
+    } for assignment in crew_assignments]
+
+    return response
+
+def add_crew_controller():
+    data = request.get_json()
+    if not all(key in data for key in ['first_name', 'last_name', 'flight_id', 'role_id']):
+        return jsonify({'message': 'Missing required fields'}), 400
+
+    # Start a transaction
+    try:
+        last_crew = Crew.query.order_by(Crew.crew_id.desc()).first().to_dict()['crew_id']
+        # Create a new crew member
+        new_crew = Crew(
+            crew_id=last_crew+1,
+            first_name=data['first_name'],
+            last_name=data['last_name']
+        )
+        db.session.add(new_crew)
+        db.session.flush()
+
+        # Create a flight crew assignment
+        new_assignment = FlightCrewAssignment(
+            flight_id=data['flight_id'],
+            crew_id=new_crew.crew_id,
+            role_id=data['role_id']
+        )
+        db.session.add(new_assignment)
+        
+        # Commit the transaction
+        db.session.commit()
+        return jsonify({
+            'crew_id': new_crew.crew_id,
+            'first_name': new_crew.first_name,
+            'last_name': new_crew.last_name,
+            'flight_id': new_assignment.flight_id,
+            'role_id': new_assignment.role_id
+        }), 201
+    except Exception as e:
+        db.session.rollback()  # Rollback the transaction on error
+        return jsonify({'message': str(e)}), 500
+    
+def fetch_flights_controller():
+    flights = Flight.query.all()
+    response = [flight.to_dict() for flight in flights]
+    return response
+
+def fetch_roles_controller():
+    roles = CrewRole.query.all()
+    response = [role.to_dict() for role in roles]
+    print(response)
+    return response
