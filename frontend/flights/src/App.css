@@ -1,0 +1,338 @@
+.App {
+  text-align: center;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%; /* Ensure html and body take full width */
+}
+
+/* App.css */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.content {
+  width: 80%; /* Adjust the width of the content area as needed */
+  margin-top: 80px; /* Ensure content is below the navigation bar */
+}
+
+/* Navigation.css */
+.navbar {
+  background-color: #333;
+  padding: 10px 0; /* Add padding to the top and bottom */
+  width: 90%; /* Set width to 90% */
+  margin: 0 auto; /* Center the navbar horizontally */
+  border-radius: 10px; /* Add rounded corners */
+  position: fixed; /* Fix the navigation bar at the top of the page */
+  top: 0;
+  z-index: 1000; /* Ensure navigation bar is above other elements */
+}
+
+.nav-links {
+  list-style: none; /* Remove bullet points */
+  padding: 0; /* Remove default padding */
+}
+
+.nav-links li {
+  display: inline; /* Display list items horizontally */
+  margin-right: 20px; /* Add spacing between navigation links */
+}
+
+.nav-links li:first-child {
+  margin-left: 10px; /* Remove margin from the last navigation link */
+}
+.nav-links li:last-child {
+  margin-right: 10px; /* Remove margin from the last navigation link */
+}
+
+.nav-links li a {
+  color: white;
+  text-decoration: none;
+}
+
+.nav-links li a:hover {
+  color: lightgray;
+}
+
+.login-container {
+  width: 300px; /* Set a fixed width for the login form */
+  margin: 100px auto; /* Center the form vertically and horizontally */
+  padding: 20px; /* Add padding inside the container */
+  background-color: #f9f9f9; /* Light background for the container */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Add a subtle shadow to make it pop out */
+  border-radius: 8px; /* Rounded corners for a softer look */
+  display: flex;
+  flex-direction: column; /* Stack the form elements vertically */
+  align-items: center; /* Center-align the form elements */
+}
+
+.login-container form {
+  width: 100%; /* Ensure the form uses the full width of the container */
+}
+
+.login-container input {
+  width: 90%; /* Inputs take 90% of the container's width */
+  padding: 8px; /* Padding inside the inputs */
+  margin: 6px 0; /* Add space between the inputs */
+  box-sizing: border-box; /* Include padding and border in the input's width */
+  border: 1px solid #ccc; /* Subtle border for the inputs */
+  border-radius: 4px; /* Rounded borders for the inputs */
+}
+
+.login-container button {
+  width: 95%; /* Button takes almost full width of the container */
+  padding: 10px; /* Padding inside the button */
+  margin-top: 10px; /* Space above the button */
+  background-color: #0056b3; /* Blue background for the button */
+  color: white; /* White text color */
+  border: none; /* No border */
+  border-radius: 4px; /* Rounded corners for the button */
+  cursor: pointer; /* Pointer cursor on hover */
+}
+
+.login-container button:hover {
+  background-color: #004494; /* Slightly darker blue on hover */
+}
+.register-container {
+  width: 300px;
+  margin: 100px auto;
+  padding: 20px;
+  background-color: #f9f9f9;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.register-container form {
+  width: 100%;
+}
+
+.register-container input {
+  width: 90%;
+  padding: 8px;
+  margin: 6px 0;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.register-container button {
+  width: 95%;
+  padding: 10px;
+  margin-top: 10px;
+  background-color: #0056b3;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.register-container button:hover {
+  background-color: #004494;
+}
+
+/* In your App.css or a dedicated stylesheet */
+
+.user-dashboard {
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  margin: 20px auto;
+  padding: 20px;
+  border-radius: 8px;
+  background-color: #ffffff; /* Light background for better readability */
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15); /* Slightly deeper shadow for more depth */
+  width: 90%; /* Restrict width and center align for better structure */
+  max-width: 1200px; /* Maximum width to ensure content is not too stretched */
+}
+
+.user-dashboard h2 {
+  color: #2c3e50; /* Darker shade for better contrast */
+  border-bottom: 2px solid #ecf0f1; /* Subtle line under the header */
+  padding-bottom: 10px; /* Space below the line */
+}
+
+.user-dashboard table {
+  width: 100%;
+  margin-top: 20px;
+  border-collapse: collapse; /* Ensures borders between cells are shared */
+}
+
+.user-dashboard th, .user-dashboard td {
+  border: 1px solid #dcdcdc; /* Lighter border color */
+  text-align: left;
+  padding: 12px; /* More padding for better spacing */
+}
+
+.user-dashboard th {
+  background-color: #e8e8e8; /* Slightly darker background for header */
+  color: #333; /* Dark color for text for contrast */
+}
+
+.user-dashboard tr:nth-child(even) {
+  background-color: #f8f8f8; /* Lighter color for even rows */
+}
+
+.user-dashboard tr:hover {
+  background-color: #f0f0f0; /* Hover effect for row highlight */
+}
+
+.detail-row {
+  cursor: pointer; /* Cursor to pointer to indicate it's clickable */
+}
+
+.detail-info {
+  background-color: #f6f6f6; /* Slightly different background for detail rows */
+  padding: 10px 20px; /* More padding for emphasis */
+  font-style: italic; /* Style detail text to differentiate */
+}
+
+.user-dashboard select {
+  padding: 8px;
+  border: 1px solid #dcdcdc;
+  border-radius: 4px;
+}
+
+.user-dashboard input[type="date"] {
+  padding: 8px;
+  border: 1px solid #dcdcdc;
+  border-radius: 4px;
+}
+.user-dashboard input[type="number"] {
+  padding: 8px;
+  border: 1px solid #dcdcdc;
+  border-radius: 4px;
+}
+
+
+
+
+/* Add additional styles for the navigation bar as needed */
+/* General Styles for Flight Management */
+.flight-management-container {
+  margin: 20px;
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  width: 80%;
+  align-self: center;
+}
+
+.flight-management-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.flight-management-header h2 {
+  margin: 0;
+}
+
+.flight-management-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.flight-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.flight-table th, .flight-table td {
+  text-align: left;
+  padding: 8px;
+  border-bottom: 1px solid #ccc;
+}
+
+.flight-table th {
+  background-color: #e9ecef;
+}
+
+.flight-form-input {
+  padding: 8px;
+  margin-right: 5px;
+  width: 100%;
+}
+
+.flight-form-button {
+  padding: 8px 16px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.flight-form-button:hover {
+  background-color: #0056b3;
+}
+
+.error-message {
+  color: red;
+  margin-top: 10px;
+}
+
+
+.crew-dashboard {
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  margin: 20px auto;
+  padding: 20px;
+  border-radius: 8px;
+  background-color: #ffffff;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  width: 80%;
+  max-width: 800px;
+}
+
+.crew-dashboard h2 {
+  color: #2c3e50;
+  border-bottom: 2px solid #ecf0f1;
+  padding-bottom: 10px;
+}
+
+.crew-dashboard table {
+  width: 100%;
+  margin-top: 20px;
+  border-collapse: collapse;
+}
+
+.crew-dashboard th, .crew-dashboard td {
+  border: 1px solid #dcdcdc;
+  padding: 12px;
+  text-align: left;
+}
+
+.crew-dashboard th {
+  background-color: #e8e8e8;
+  color: #333;
+}
+
+.crew-dashboard tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+.crew-dashboard tr:hover {
+  background-color: #f0f0f0;
+}
+
+.crew-dashboard button {
+  cursor: pointer;
+  padding: 8px 16px;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+.crew-dashboard button:hover {
+  background-color: #2980b9;
+}
+
