@@ -8,3 +8,4 @@ psycopg2-binary
 Werkzeug==2.2.2
 PyJWT
 pytest
+pytest-flask

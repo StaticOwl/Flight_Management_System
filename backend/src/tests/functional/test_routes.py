@@ -1,12 +1,7 @@
 import pytest
 import os
 from __init__ import create_app
-from dotenv import load_dotenv
 
-# Set the Testing configuration prior to creating the Flask application
-load_dotenv()
-os.environ['CONFIG_TYPE'] = 'testing'
-flask_app = create_app(os.getenv("CONFIG_TYPE"))
 
 def test_list_user_controller(test_client):
     """
