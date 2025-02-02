@@ -19,6 +19,5 @@ import urls
 from urls import urls_bp  # Import Blueprint
 app.register_blueprint(urls_bp)
 
-
 if __name__ == "__main__":
     app.run()
