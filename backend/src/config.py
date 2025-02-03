@@ -1,10 +1,15 @@
 import os
+
+from dotenv import load_dotenv
+load_dotenv()
 class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = True
 class DevelopmentConfig(Config):
     DEVELOPMENT = True
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = os.getenv("DEVELOPMENT_DATABASE_URL")
+    print(SQLALCHEMY_DATABASE_URI)
+    print(os.getenv("DEVELOPMENT_DATABASE_URL"))
 class TestingConfig(Config):
     TESTING = True
     SQLALCHEMY_DATABASE_URI = os.getenv("TEST_DATABASE_URL")

@@ -48,7 +48,7 @@ const Register = () => {
   return (
     <div className="register-container">
       <h2>Register User</h2>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} method="POST">
         <input type="text" name="first_name" value={user.first_name} onChange={handleChange} placeholder="First Name" required />
         <input type="text" name="last_name" value={user.last_name} onChange={handleChange} placeholder="Last Name" required />
         <input type="email" name="email" value={user.email} onChange={handleChange} placeholder="Email" required />

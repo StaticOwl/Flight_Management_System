@@ -1,84 +1,79 @@
--- CREATE TABLE Users (
---     user_id SERIAL PRIMARY KEY,
---     first_name VARCHAR(50) NOT NULL,
---     last_name VARCHAR(50) NOT NULL,
---     email VARCHAR(100) UNIQUE NOT NULL,
---     password VARCHAR(100) NOT NULL,
---     phone VARCHAR(20),
---     address VARCHAR(200)
--- );
+ CREATE TABLE Users (
+     user_id SERIAL PRIMARY KEY,
+     first_name VARCHAR(50) NOT NULL,
+     last_name VARCHAR(50) NOT NULL,
+     email VARCHAR(100) UNIQUE NOT NULL,
+     password VARCHAR(100) NOT NULL,
+     phone VARCHAR(20),
+     address VARCHAR(200)
+ );
 
--- CREATE TABLE Airlines (
---     airline_id SERIAL PRIMARY KEY,
---     airline_name VARCHAR(100) NOT NULL,
---     contact_email VARCHAR(100),
---     contact_phone VARCHAR(20)
--- );
+ CREATE TABLE Airlines (
+     airline_id SERIAL PRIMARY KEY,
+     airline_name VARCHAR(100) NOT NULL,
+     contact_email VARCHAR(100),
+     contact_phone VARCHAR(20)
+ );
 
--- CREATE TABLE Flights (
---     flight_id SERIAL PRIMARY KEY,
---     airline_id INTEGER NOT NULL REFERENCES Airlines(airline_id),
---     flight_number VARCHAR(10) NOT NULL,
---     departure_airport VARCHAR(100) NOT NULL,
---     arrival_airport VARCHAR(100) NOT NULL,
---     departure_time TIMESTAMP NOT NULL,
---     arrival_time TIMESTAMP NOT NULL,
---     aircraft_type VARCHAR(50) NOT NULL,
---     num_seats INTEGER NOT NULL
--- );
+ CREATE TABLE Flights (
+     flight_id SERIAL PRIMARY KEY,
+     airline_id INTEGER NOT NULL REFERENCES Airlines(airline_id),
+     flight_number VARCHAR(10) NOT NULL,
+     departure_airport VARCHAR(100) NOT NULL,
+     arrival_airport VARCHAR(100) NOT NULL,
+     departure_time TIMESTAMP NOT NULL,
+     arrival_time TIMESTAMP NOT NULL,
+     aircraft_type VARCHAR(50) NOT NULL,
+     num_seats INTEGER NOT NULL
+ );
 
--- CREATE TABLE Crew (
---     crew_id SERIAL PRIMARY KEY,
---     first_name VARCHAR(50) NOT NULL,
---     last_name VARCHAR(50) NOT NULL
--- );
+ CREATE TABLE Crew (
+     crew_id SERIAL PRIMARY KEY,
+     first_name VARCHAR(50) NOT NULL,
+     last_name VARCHAR(50) NOT NULL
+ );
 
--- CREATE TABLE CrewRoles (
---     role_id SERIAL PRIMARY KEY,
---     role_name VARCHAR(50) NOT NULL
--- );
+ CREATE TABLE CrewRoles (
+     role_id SERIAL PRIMARY KEY,
+     role_name VARCHAR(50) NOT NULL
+ );
 
--- CREATE TABLE Bookings (
---     booking_id SERIAL PRIMARY KEY,
---     user_id INTEGER NOT NULL REFERENCES Users(user_id)
--- );
+ CREATE TABLE Bookings (
+     booking_id SERIAL PRIMARY KEY,
+     user_id INTEGER NOT NULL REFERENCES Users(user_id)
+ );
 
--- CREATE TABLE BookingDetails (
---     booking_details_id SERIAL PRIMARY KEY,
---     booking_id INTEGER NOT NULL REFERENCES Bookings(booking_id),
---     flight_id INTEGER NOT NULL REFERENCES Flights(flight_id),
---     booking_date DATE NOT NULL,
---     num_passengers INTEGER NOT NULL,
---     total_cost DECIMAL(10,2) NOT NULL
--- );
+ CREATE TABLE BookingDetails (
+     booking_details_id SERIAL PRIMARY KEY,
+     booking_id INTEGER NOT NULL REFERENCES Bookings(booking_id),
+     flight_id INTEGER NOT NULL REFERENCES Flights(flight_id),
+     booking_date DATE NOT NULL,
+     num_passengers INTEGER NOT NULL,
+     total_cost DECIMAL(10,2) NOT NULL
+ );
 
--- CREATE TABLE Passengers (
---     passengpassword
--- CREATE TABLE Payments (
---     payment_id SERIAL PRIMARY KEY,
---     booking_details_id INTEGER NOT NULL REFERENCES BookingDetails(booking_details_id),
---     payment_date DATE NOT NULL,
---     amount DECIMAL(10,2) NOT NULL,
---     payment_method VARCHAR(50) NOT NULL
--- );
+ CREATE TABLE Passengers (
+     passenger_id SERIAL PRIMARY KEY,
+     booking_details_id INTEGER NOT NULL REFERENCES BookingDetails(booking_details_id),
+     first_name varchar(50) NOT NULL,
+     last_name varchar(50) NOT NULL,
+     date_of_birth DATE NOT NULL
+);
+ CREATE TABLE Payments (
+     payment_id SERIAL PRIMARY KEY,
+     booking_details_id INTEGER NOT NULL REFERENCES BookingDetails(booking_details_id),
+     payment_date DATE NOT NULL,
+     amount DECIMAL(10,2) NOT NULL,
+     payment_method VARCHAR(50) NOT NULL
+ );
 
--- CREATE TABLE FlightCrewAssignments (
---     id SERIAL PRIMARY KEY,
---     flight_id INTEGER NOT NULL REFERENCES Flights(flight_id),
---     crew_id INTEGER NOT NULL REFERENCES Crew(crew_id),
---     role_id INTEGER NOT NULL REFERENCES CrewRoles(role_id)
--- );
+ CREATE TABLE FlightCrewAssignments (
+     id SERIAL PRIMARY KEY,
+     flight_id INTEGER NOT NULL REFERENCES Flights(flight_id),
+     crew_id INTEGER NOT NULL REFERENCES Crew(crew_id),
+     role_id INTEGER NOT NULL REFERENCES CrewRoles(role_id)
+ );
 
--- DROP TABLE flightcrewassignments;
--- DROP TABLE payments;
--- DROP TABLE passengers;
--- DROP TABLE bookingdetails;
--- DROP TABLE bookings;
--- DROP TABLE crewroles;
--- DROP TABLE crew;
--- DROP TABLE flights;
--- DROP TABLE airlines;
--- DROP TABLE users;
 
 delete from users;
 delete from flights;
@@ -117,8 +112,9 @@ INSERT INTO crew (crew_id, first_name, last_name) VALUES
 (4, 'David', 'Thompson'),
 (5, 'Eve', 'Martinez');
 
+
 -- CrewRoles
-INSERT INTO crew_roles (role_id, role_name) VALUES
+INSERT INTO CrewRoles (role_id, role_name) VALUES
 (1, 'Pilot'),
 (2, 'Co-Pilot'),
 (3, 'Flight Attendant'),
@@ -134,7 +130,7 @@ INSERT INTO bookings (booking_id, user_id) VALUES
 
 
 -- BookingDetails
-INSERT INTO booking_details (booking_details_id, booking_id, flight_id, booking_date, num_passengers, total_cost) VALUES
+INSERT INTO BookingDetails (booking_details_id, booking_id, flight_id, booking_date, num_passengers, total_cost) VALUES
 (1, 1, 2, '2023-05-25', 2, 800.00),
 (2, 2, 3, '2023-05-26', 4, 1200.00),
 (3, 3, 4, '2023-05-27', 1, 1000.00),
@@ -165,7 +161,7 @@ INSERT INTO payments (payment_id, booking_details_id, payment_date, amount, paym
 (4, 5, '2023-05-29', 900.00, 'Bank Transfer');
 
 -- FlightCrewAssignments
-INSERT INTO flight_crew_assignments (flight_id, crew_id, role_id) VALUES
+INSERT INTO FlightCrewAssignments (flight_id, crew_id, role_id) VALUES
 (1, 1, 1),
 (1, 2, 2),
 (1, 3, 3),
