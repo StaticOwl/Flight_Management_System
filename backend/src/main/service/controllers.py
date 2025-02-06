@@ -5,7 +5,7 @@ import uuid
 from __init__ import db
 import jwt
 from sqlalchemy.exc import SQLAlchemyError
-from models import Airline, Flight, Crew, CrewRole, FlightCrewAssignment, Booking, BookingDetail, Passenger, Payment, User
+from dao.models import Airline, Flight, Crew, CrewRole, FlightCrewAssignment, Booking, BookingDetail, Passenger, Payment, User
 
 # ----------------------------------------------- #
 # Query Object Methods => https://docs.sqlalchemy.org/en/14/orm/query.html#sqlalchemy.orm.Query
