@@ -1,25 +1,48 @@
 import pytest
-from models import User
+import sys
 import os
+
+# Ensure `main/` is in the import path
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../main/")))
+
+from main.dao.models import User
+from main import create_app, db
 from dotenv import load_dotenv
 
-from __init__ import create_app
+# Load environment variables (if needed)
+load_dotenv()
 
-@pytest.fixture(scope='module')
-def test_client():
-    # Set the Testing configuration prior to creating the Flask application
-    load_dotenv()
-    os.environ['CONFIG_TYPE'] = 'testing'
-    flask_app = create_app(os.getenv("CONFIG_TYPE"))
+@pytest.fixture(scope='session')
+def test_app():
+    """Create and configure a new Flask test app instance."""
+    app = create_app("testing")
+    
+    with app.app_context():
+        db.create_all()
 
-    with flask_app.test_client() as testing_client:
-        # Establish an application context
-        with flask_app.app_context():
-            yield testing_client
+    yield app
+    with app.app_context():
+        db.session.remove() 
+        db.drop_all()
+        db.get_engine(app).dispose()
+
+@pytest.fixture(scope='function')
+def test_client(test_app):
+    """Return a test client for making API requests."""
+    return test_app.test_client()
+
+@pytest.fixture(scope="function")
+def db_session(test_app):
+    """Provides a test database session, rolling back after each test."""
+    with test_app.app_context():
+        session = db.session
+        yield session
+        session.rollback()
+        session.close()
 
 @pytest.fixture(scope='module')
 def new_user():
-
+    """Create a new user for testing."""
     user = User(
         first_name='Charles',
         last_name='Babbage',

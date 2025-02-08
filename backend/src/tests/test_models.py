@@ -1,5 +1,5 @@
 import pytest
-from models import User
+from main.dao.models import User
 #Courtesy https://testdriven.io/blog/flask-pytest/
 
 #CRUD per table

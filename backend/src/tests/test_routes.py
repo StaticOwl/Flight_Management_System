@@ -1,6 +1,5 @@
 import pytest
 import os
-from __init__ import create_app
 
 
 def test_list_user_controller(test_client):

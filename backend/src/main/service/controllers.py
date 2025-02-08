@@ -2,7 +2,7 @@ from flask import request, jsonify, make_response, request
 from datetime import datetime, timedelta
 from werkzeug.security import generate_password_hash, check_password_hash
 import uuid
-from __init__ import db
+from main import db
 import jwt
 from sqlalchemy.exc import SQLAlchemyError
 from dao.models import Airline, Flight, Crew, CrewRole, FlightCrewAssignment, Booking, BookingDetail, Passenger, Payment, User
