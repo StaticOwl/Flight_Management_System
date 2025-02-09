@@ -15,7 +15,7 @@ load_dotenv()
 @pytest.fixture(scope='session')
 def test_app():
     """Create and configure a new Flask test app instance."""
-    app = create_app("testing")
+    app = create_app(db, "testing")
     
     with app.app_context():
         db.create_all()
