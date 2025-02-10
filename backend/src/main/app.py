@@ -1,9 +1,8 @@
 import os
 
 # App Initialization
-from dao.models import db, User, Airline, Flight, Booking, BookingDetail
 import os
-from __init__ import create_app # from __init__ file
+from __init__ import create_app
 
 app = create_app()
 
@@ -15,8 +14,7 @@ def hello():
             print(f"Endpoint: {rule.endpoint}, Methods: {rule.methods}, URL: {rule.rule}")
     return "Hello World!"
 
-import service.urls as urls
-from service.urls import urls_bp  # Import Blueprint
+from service.urls import urls_bp
 app.register_blueprint(urls_bp)
 
 if __name__ == "__main__":
