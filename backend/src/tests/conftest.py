@@ -2,6 +2,8 @@ import pytest
 import sys
 import os
 
+import sqlalchemy
+
 # Ensure `main/` is in the import path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../main/")))
 
@@ -19,6 +21,9 @@ def test_app():
     
     with app.app_context():
         db.create_all()
+        with open("../main/resources/DDL.sql") as file:
+            q = sqlalchemy.text(file.read())
+            db.session.execute(q)
 
     yield app
     with app.app_context():
