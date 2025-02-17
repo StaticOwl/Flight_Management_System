@@ -1,6 +1,6 @@
 from flask import request, jsonify
 
-from service.controllers import (
+from main.service.controllers import (
     list_all_controller,
     create_user_controller,
     create_booking_controller,

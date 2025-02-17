@@ -7,7 +7,7 @@ import sqlalchemy
 # Ensure `main/` is in the import path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../main/")))
 
-from main import create_app, db
+from main.__init__ import create_app, db
 from dotenv import load_dotenv
 
 # Load environment variables (if needed)
@@ -38,6 +38,7 @@ def test_client(test_app):
 @pytest.fixture(scope="session")
 def db_session(test_app, request):
     """Provides a test database session, rolling back after each test."""
+    print(db.metadata.tables.keys())
     with test_app.app_context():
         session = db.session
         with open(os.path.abspath(os.path.join(os.path.dirname(__file__), "../main/resources/DDL.sql")), "r") as file:
