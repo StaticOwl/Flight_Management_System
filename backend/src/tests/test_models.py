@@ -3,36 +3,6 @@ from main.dao.models import User, Airline, BookingDetail, Booking, Crew, CrewRol
 #Courtesy https://testdriven.io/blog/flask-pytest/
 # from datetime import datetime
 
-
-# def test_user_model(db_session):
-#     """Test User model creation and retrieval."""
-#     user = User(
-#         first_name='John',
-#         last_name='Doe',
-#         email='john.doe@example.com',
-#         password='password123',
-#         phone='1234567890',
-#         address='123 Main St'
-#     )
-#     db_session.add(user)
-#     db_session.commit()
-
-#     retrieved_user = db_session.query(User).filter_by(email='john.doe@example.com').first()
-#     assert retrieved_user is not None
-#     assert retrieved_user.first_name == 'John'
-#     assert retrieved_user.last_name == 'Doe'
-
-
-# def test_airline_model(db_session):
-#     """Test Airline model creation and retrieval."""
-#     airline = Airline(
-#         airline_name='Test Airline',
-#         contact_email='contact@testairline.com',
-#         contact_phone='9876543210'
-#     )
-#     db_session.add(airline)
-#     db_session.commit()
-
 #Read
 def test_read_user(db_session):
     """
@@ -56,7 +26,7 @@ def test_read_airline(db_session):
 
     TESTS SQLAlchemy setup for READ
     """
-    u = Airline.query.get(1)
+    u = db_session.get(Airline, 1)
     assert u.airline_name == 'AirLine One'
     assert u.contact_email == 'contact@airlineone.com'
 
@@ -68,7 +38,7 @@ def test_read_bookingdetail(db_session):
 
     TESTS SQLAlchemy setup for READ
     """
-    u = BookingDetail.query.get(1)
+    u = db_session.get(BookingDetail, 1)
     assert u.total_cost == 800.00
     assert u.num_passengers == 2
     assert u.flight_id == 2
@@ -81,7 +51,7 @@ def test_read_booking(db_session):
 
     TESTS SQLAlchemy setup for READ
     """
-    u = Booking.query.get(2)
+    u = db_session.get(Booking, 2)
     assert u.user_id == 1
 
 def test_read_crew(db_session):
@@ -92,7 +62,7 @@ def test_read_crew(db_session):
 
     TESTS SQLAlchemy setup for READ
     """
-    u = Crew.query.get(1)
+    u = db_session.get(Crew, 1)
     assert u.first_name == 'Alice'
     assert u.last_name == 'Taylor'
 
@@ -104,7 +74,7 @@ def test_read_crewrole(db_session):
 
     TESTS SQLAlchemy setup for READ
     """
-    u = CrewRole.query.get(1)
+    u = db_session.get(CrewRole, 1)
     assert u.role_name == 'Pilot'
 
 def test_read_flightcrewassignment(db_session):
@@ -115,7 +85,7 @@ def test_read_flightcrewassignment(db_session):
 
     TESTS SQLAlchemy setup for READ
     """
-    u = FlightCrewAssignment.query.get(1)
+    u = db_session.get(FlightCrewAssignment, 1)
     assert u.flight_id == 1
     assert u.crew_id == 1
     assert u.role_id == 1
@@ -128,7 +98,7 @@ def test_read_flight(db_session):
 
     TESTS SQLAlchemy setup for READ
     """
-    u = Flight.query.get(1)
+    u = db_session.get(Flight, 1)
     assert u.airline_id == 1
     assert u.flight_number == 'AL101'
     assert u.departure_airport == 'JFK'
@@ -144,7 +114,7 @@ def test_read_passenger(db_session):
 
     TESTS SQLAlchemy setup for READ
     """
-    u = Passenger.query.get(1)
+    u = db_session.get(Passenger, 1)
     assert u.first_name == 'John'
     assert u.last_name == 'Doe'
     assert u.booking_details_id == 1
@@ -157,16 +127,12 @@ def test_read_payment(db_session):
 
     TESTS SQLAlchemy setup for READ
     """
-    u = Payment.query.get(3)
+    u = db_session.get(Payment, 3)
     assert u.booking_details_id == 1
     assert u.amount == 800.00
     assert u.payment_method == 'Credit Card'
 
 
-
-#     retrieved_airline = db_session.query(Airline).filter_by(airline_name='Test Airline').first()
-#     assert retrieved_airline is not None
-#     assert retrieved_airline.contact_email == 'contact@testairline.com'
 #Update
 def test_user_update(db_session):
     """

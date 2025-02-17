@@ -4,10 +4,6 @@ from sqlalchemy.orm import relationship
 
 from main import db
 
-# ----------------------------------------------- #
-
-# SQL Datatype Objects => https://docs.sqlalchemy.org/en/14/core/types.html
-
 class User(db.Model):
     __tablename__ = 'users'
     user_id = db.Column(db.Integer, primary_key=True)
@@ -22,9 +18,6 @@ class User(db.Model):
     def to_dict(self):
         return {c.key: getattr(self, c.key) for c in inspect(self).mapper.column_attrs}
 
-    def __repr__(self):
-        return f"<User {self.email}>"
-
 class Airline(db.Model):
     __tablename__ = 'airlines'
     airline_id = db.Column(db.Integer, primary_key=True)
@@ -35,9 +28,6 @@ class Airline(db.Model):
     
     def to_dict(self):
         return {c.key: getattr(self, c.key) for c in inspect(self).mapper.column_attrs}
-
-    def __repr__(self):
-        return f"<Airline {self.airline_name}>"
 
 class Flight(db.Model):
     __tablename__ = 'flights'
@@ -59,10 +49,6 @@ class Flight(db.Model):
     def to_dict(self):
         return {c.key: getattr(self, c.key) for c in inspect(self).mapper.column_attrs}
 
-    def __repr__(self):
-        return f"<Flight {self.flight_number} from {self.departure_airport} to {self.arrival_airport}>"
-
-
 class Crew(db.Model):
     __tablename__ = 'crew'
     crew_id = db.Column(db.Integer, primary_key=True)
@@ -73,8 +59,6 @@ class Crew(db.Model):
     def to_dict(self):
         return {c.key: getattr(self, c.key) for c in inspect(self).mapper.column_attrs}
 
-    def __repr__(self):
-        return f"<Crew {self.first_name} {self.last_name}>"
 
 class CrewRole(db.Model):
     __tablename__ = 'crew_roles'
@@ -85,8 +69,6 @@ class CrewRole(db.Model):
     def to_dict(self):
         return {c.key: getattr(self, c.key) for c in inspect(self).mapper.column_attrs}
 
-    def __repr__(self):
-        return f"<CrewRole {self.role_name}>"
 
 class Booking(db.Model):
     __tablename__ = 'bookings'
@@ -97,9 +79,6 @@ class Booking(db.Model):
     
     def to_dict(self):
         return {c.key: getattr(self, c.key) for c in inspect(self).mapper.column_attrs}
-
-    def __repr__(self):
-        return f"<Booking {self.booking_id} by User {self.user_id}>"
 
 class BookingDetail(db.Model):
     __tablename__ = 'booking_details'
@@ -117,9 +96,6 @@ class BookingDetail(db.Model):
     def to_dict(self):
         return {c.key: getattr(self, c.key) for c in inspect(self).mapper.column_attrs}
 
-    def __repr__(self):
-        return f"<BookingDetail {self.booking_details_id} for Flight {self.flight_id}>"
-
 
 class Passenger(db.Model):
     __tablename__ = 'passengers'
@@ -132,9 +108,6 @@ class Passenger(db.Model):
     
     def to_dict(self):
         return {c.key: getattr(self, c.key) for c in inspect(self).mapper.column_attrs}
-
-    def __repr__(self):
-        return f"<Passenger {self.first_name} {self.last_name} ID {self.passenger_id}>"
 
 
 class Payment(db.Model):
@@ -149,9 +122,6 @@ class Payment(db.Model):
     def to_dict(self):
         return {c.key: getattr(self, c.key) for c in inspect(self).mapper.column_attrs}
 
-    def __repr__(self):
-        return f"<Payment {self.payment_id} for BookingDetail {self.booking_details_id}>"
-
 
 class FlightCrewAssignment(db.Model):
     __tablename__ = 'flight_crew_assignments'
@@ -165,6 +135,3 @@ class FlightCrewAssignment(db.Model):
         
     def to_dict(self):
         return {c.key: getattr(self, c.key) for c in inspect(self).mapper.column_attrs}
-
-    def __repr__(self):
-        return f"<FlightCrewAssignment for Flight {self.flight_id} Crew {self.crew_id} Role {self.role_id}>"
