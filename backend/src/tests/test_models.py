@@ -398,9 +398,129 @@ def test_update_airline(db_session):
 
     TESTS SQLAlchemy setup for Update
     """
-    u = User.query.filter_by(email='john.doe@email.com').first()
+    u = Airline.query.get(1)
+    u.airline_name = 'AirLine Two'
+    db_session.commit()
+
+    u2 = Airline.query.get(1)
+    assert u2.airline_name == 'AirLine Two'
+
+def test_update_bookingdetail(db_session):
+    """
+    GIVEN a DB instance
+    WHEN an existing user is written to the DB
+    THEN check that the retrieved data matches the intended write
+
+    TESTS SQLAlchemy setup for Update
+    """
+    u = BookingDetail.query.get(1)
+    u.total_cost = 900.50
+    db_session.commit()
+
+    u2 = BookingDetail.query.get(1)
+    assert u2.total_cost == 900.50
+
+def test_update_booking(db_session):
+    """
+    GIVEN a DB instance
+    WHEN an existing user is written to the DB
+    THEN check that the retrieved data matches the intended write
+
+    TESTS SQLAlchemy setup for Update
+    """
+    u = Booking.query.get(1)
+    u.user_id = 2
+    db_session.commit()
+
+    u2 = Booking.query.get(1)
+    assert u2.user_id == 2
+
+def test_update_crew(db_session):
+    """
+    GIVEN a DB instance
+    WHEN an existing user is written to the DB
+    THEN check that the retrieved data matches the intended write
+
+    TESTS SQLAlchemy setup for Update
+    """
+    u = Crew.query.get(1)
+    u.first_name = 'Arial'
+    db_session.commit()
+
+    u2 = Crew.query.get(1)
+    assert u2.first_name == 'Arial'
+
+def test_update_crewrole(db_session):
+    """
+    GIVEN a DB instance
+    WHEN an existing user is written to the DB
+    THEN check that the retrieved data matches the intended write
+
+    TESTS SQLAlchemy setup for Update
+    """
+    u = CrewRole.query.get(1)
+    u.role_name = 'Jim'
+    db_session.commit()
+
+    u2 = CrewRole.query.get(1)
+    assert u2.role_name == 'Jim'
+
+def test_update_flightcrewassignment(db_session):
+    """
+    GIVEN a DB instance
+    WHEN an existing user is written to the DB
+    THEN check that the retrieved data matches the intended write
+
+    TESTS SQLAlchemy setup for Update
+    """
+    u = FlightCrewAssignment.query.get(1)
+    u.flight_id = 5
+    db_session.commit()
+
+    u2 = FlightCrewAssignment.query.get(1)
+    assert u2.flight_id == 5
+
+def test_update_flight(db_session):
+    """
+    GIVEN a DB instance
+    WHEN an existing user is written to the DB
+    THEN check that the retrieved data matches the intended write
+
+    TESTS SQLAlchemy setup for Update
+    """
+    u = Flight.query.get(1)
+    u.aircraft_type = 'Boeing 787'
+    db_session.commit()
+
+    u2 = Flight.query.get(1)
+    assert u2.aircraft_type == 'Boeing 787'
+
+def test_update_passenger(db_session):
+    """
+    GIVEN a DB instance
+    WHEN an existing user is written to the DB
+    THEN check that the retrieved data matches the intended write
+
+    TESTS SQLAlchemy setup for Update
+    """
+    u = Passenger.query.get(1)
     u.first_name = 'Jim'
     db_session.commit()
 
-    u2 = User.query.filter_by(email='john.doe@email.com').first()
+    u2 = Passenger.query.get(1)
     assert u2.first_name == 'Jim'
+
+def test_update_payment(db_session):
+    """
+    GIVEN a DB instance
+    WHEN an existing user is written to the DB
+    THEN check that the retrieved data matches the intended write
+
+    TESTS SQLAlchemy setup for Update
+    """
+    u = Payment.query.get(1)
+    u.amount = 900.50
+    db_session.commit()
+
+    u2 = Payment.query.get(1)
+    assert u2.amount == 900.50
