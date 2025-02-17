@@ -41,6 +41,7 @@ def list_entities(name):
 
 @urls_bp.route("/login", methods=['POST'])
 def login():
+    print("Login")
     return login_controller()
 
 # User endpoints
