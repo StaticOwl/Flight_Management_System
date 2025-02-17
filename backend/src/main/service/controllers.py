@@ -1,8 +1,8 @@
-from flask import request, jsonify, make_response, request
+from flask import request, jsonify, make_response, request, current_app
 from datetime import datetime, timedelta
 from werkzeug.security import generate_password_hash, check_password_hash
 import uuid
-from __init__ import db
+from main import db
 import jwt
 from sqlalchemy.exc import SQLAlchemyError
 from dao.models import Airline, Flight, Crew, CrewRole, FlightCrewAssignment, Booking, BookingDetail, Passenger, Payment, User
@@ -28,7 +28,7 @@ def login_controller():
 
     user = User.query.filter_by(email=data['email']).first()
     if not user:
-        return jsonify({'message': 'Invalid email'}), 401
+        return jsonify({'message': "User doesn't exist"}), 401
     if user and (check_password_hash(user.password, data['password']) or data['password'] == user.password):
         token = token = jwt.encode({
             'user_id': user.user_id,
