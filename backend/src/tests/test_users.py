@@ -1,6 +1,6 @@
 import pytest
 
-from utils import get_auth_token
+from tests.utils import get_auth_token
 
 
 def test_create_user_success(test_client):

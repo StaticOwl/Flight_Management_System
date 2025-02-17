@@ -9,3 +9,5 @@ Else you can run the backend with > Python3.9. To install the requirements use p
 Frontend is created with react, so native react commands should work as is.
 
 Author: Koustav Mallick
+
+To run backend tests, cd into the backend/src/tests folder and run `pytest -s`.
