@@ -23,9 +23,6 @@ def test_app():
     
     with app.app_context():
         db.create_all()
-        with open("../main/resources/DDL.sql") as file:
-            q = sqlalchemy.text(file.read())
-            db.session.execute(q)
 
     yield app
     with app.app_context():
@@ -43,6 +40,13 @@ def db_session(test_app):
     """Provides a test database session, rolling back after each test."""
     with test_app.app_context():
         session = db.session
+        with open("main/resources/DDL.sql", "r") as file:
+            q = file.read()
+            for statement in q.split(";"):
+                s = statement.strip()
+                if s:
+                    s2 = sqlalchemy.text(s)
+                    session.execute(s2)
         yield session
         session.rollback()
         session.close()
@@ -54,7 +58,7 @@ def new_user(db_session):
     user = User(
         first_name='John',
         last_name='Doe',
-        email='john.doe@email.com',
+        email='john.doe2@email.com',
         password='password123',
         phone='867-5309',
         address='123 Main St.'

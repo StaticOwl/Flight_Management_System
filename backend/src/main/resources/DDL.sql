@@ -33,7 +33,7 @@ INSERT INTO crew (crew_id, first_name, last_name) VALUES
 
 
 -- CrewRoles
-INSERT INTO CrewRoles (role_id, role_name) VALUES
+INSERT INTO crew_roles (role_id, role_name) VALUES
 (1, 'Pilot'),
 (2, 'Co-Pilot'),
 (3, 'Flight Attendant'),
@@ -49,7 +49,7 @@ INSERT INTO bookings (booking_id, user_id) VALUES
 
 
 -- BookingDetails
-INSERT INTO BookingDetails (booking_details_id, booking_id, flight_id, booking_date, num_passengers, total_cost) VALUES
+INSERT INTO booking_details (booking_details_id, booking_id, flight_id, booking_date, num_passengers, total_cost) VALUES
 (1, 1, 2, '2023-05-25', 2, 800.00),
 (2, 2, 3, '2023-05-26', 4, 1200.00),
 (3, 3, 4, '2023-05-27', 1, 1000.00),
@@ -80,7 +80,7 @@ INSERT INTO payments (payment_id, booking_details_id, payment_date, amount, paym
 (4, 5, '2023-05-29', 900.00, 'Bank Transfer');
 
 -- FlightCrewAssignments
-INSERT INTO FlightCrewAssignments (flight_id, crew_id, role_id) VALUES
+INSERT INTO flight_crew_assignments (flight_id, crew_id, role_id) VALUES
 (1, 1, 1),
 (1, 2, 2),
 (1, 3, 3),

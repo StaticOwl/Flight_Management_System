@@ -1,12 +1,7 @@
 import pytest
 from main.dao.models import User, Airline, BookingDetail, Booking, Crew, CrewRole, FlightCrewAssignment, Flight, Passenger, Payment
 #Courtesy https://testdriven.io/blog/flask-pytest/
-# import pytest
 # from datetime import datetime
-# from main.dao.models import (
-#     User, Airline, Flight, Crew, CrewRole,
-#     Booking, BookingDetail, Passenger, Payment
-# )
 
 
 # def test_user_model(db_session):
@@ -37,6 +32,7 @@ from main.dao.models import User, Airline, BookingDetail, Booking, Crew, CrewRol
 #     )
 #     db_session.add(airline)
 #     db_session.commit()
+
 #Read
 def test_read_user(db_session):
     """
@@ -47,6 +43,7 @@ def test_read_user(db_session):
     TESTS SQLAlchemy setup for READ
     """
     u = User.query.filter_by(email='john.doe@email.com').first()
+
     assert u.first_name == 'John'
     assert u.last_name == 'Doe'
     assert u.address == '123 Main St, City, Country'
@@ -107,7 +104,7 @@ def test_read_crewrole(db_session):
 
     TESTS SQLAlchemy setup for READ
     """
-    u = User.query.get(1)
+    u = CrewRole.query.get(1)
     assert u.role_name == 'Pilot'
 
 def test_read_flightcrewassignment(db_session):
