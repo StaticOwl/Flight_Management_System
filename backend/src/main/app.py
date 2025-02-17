@@ -2,7 +2,7 @@ import os
 
 # App Initialization
 import os
-from __init__ import create_app
+from main.__init__ import create_app
 
 app = create_app()
 

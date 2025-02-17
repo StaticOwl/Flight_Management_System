@@ -2,7 +2,7 @@ from sqlalchemy import inspect
 from datetime import datetime
 from sqlalchemy.orm import relationship
 
-from main import db
+from main.__init__ import db
 
 # ----------------------------------------------- #
 
