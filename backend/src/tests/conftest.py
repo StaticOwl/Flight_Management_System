@@ -36,37 +36,23 @@ def test_client(test_app):
     return test_app.test_client()
 
 @pytest.fixture(scope="session")
-def db_session(test_app):
+def db_session(test_app, request):
     """Provides a test database session, rolling back after each test."""
     print(db.metadata.tables.keys())
     with test_app.app_context():
         session = db.session
-        with open("main/resources/DDL.sql", "r") as file:
+        with open(os.path.abspath(os.path.join(os.path.dirname(__file__), "../main/resources/DDL.sql")), "r") as file:
             q = file.read()
             for statement in q.split(";"):
                 s = statement.strip()
                 if s:
                     s2 = sqlalchemy.text(s)
                     session.execute(s2)
+        session.commit()
+
+        def teardown():
+            with test_app.app_context():
+                session.remove()
+
+        request.addfinalizer(teardown)
         yield session
-        session.rollback()
-        session.close()
-
-@pytest.fixture(scope='session')
-def new_user(db_session):
-    """Create a new user for testing."""
-    from main.dao.models import User
-    user = User(
-        first_name='John',
-        last_name='Doe',
-        email='john.doe2@email.com',
-        password='password123',
-        phone='867-5309',
-        address='123 Main St.'
-    )
-    
-    db_session.add(user)
-    db_session.commit()
-
-    print(f"New User Created: {user.user_id}, {user.email}")
-    return user
