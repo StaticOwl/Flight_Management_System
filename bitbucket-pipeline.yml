@@ -1,0 +1,57 @@
+# This is a sample build configuration for building and testing a Python backend and React frontend.
+image: atlassian/default-image:3
+
+definitions:
+  caches:
+    pip: ~/.cache/pip
+    npm: ~/.npm
+
+pipelines:
+  pull-requests:
+    '**':
+      - parallel:
+          - step:
+              name: Backend - Build and Test
+              caches:
+                - pip
+              script:
+                - cd backend
+                # Create and activate conda environment if needed
+                - if [ -f "environment.yml" ]; then
+                    wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
+                    bash miniconda.sh -b -p $HOME/miniconda;
+                    export PATH="$HOME/miniconda/bin:$PATH";
+                    conda env create -f environment.yml;
+                    source activate $(head -1 environment.yml | cut -d' ' -f2);
+                  fi
+                # Install requirements
+                - pip install -r requirements.txt
+                # Install test dependencies
+                - pip install pytest pytest-cov
+                # Run tests with coverage
+                - cd src
+                - python -m pytest tests/ --cov=main --cov-report=xml --cov-report=term
+                # Fail if coverage is below 90%
+                - coverage=$(python -c "import xml.etree.ElementTree as ET; tree = ET.parse('coverage.xml'); root = tree.getroot(); print(float(root.attrib['line-rate']) * 100)")
+                - if (( $(echo "$coverage < 90" | bc -l) )); then echo "Coverage is below 90%. Current coverage: $coverage%"; exit 1; fi
+              artifacts:
+                - backend/src/coverage.xml
+          
+          - step:
+              name: Frontend - Build and Test
+              caches:
+                - npm
+              script:
+                - cd frontend/flights
+                # Install dependencies
+                - npm ci
+                # Run tests
+                - npm test -- --coverage
+                # Check coverage threshold (if npm test doesn't do it automatically)
+                - coverage=$(node -e "const fs=require('fs'); const coverage=JSON.parse(fs.readFileSync('./coverage/coverage-summary.json')); console.log(coverage.total.lines.pct)")
+                - if (( $(echo "$coverage < 90" | bc -l) )); then echo "Coverage is below 90%. Current coverage: $coverage%"; exit 1; fi
+                # Build project
+                - npm run build
+              artifacts:
+                - frontend/flights/coverage/**
+                - frontend/flights/build/**
