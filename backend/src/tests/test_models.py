@@ -1,7 +1,7 @@
 import pytest
 
-from main.dao.adapters import delete_user, delete_airline, delete_bookingdetail, delete_booking, delete_crew, \
-    delete_crewrole, delete_flightcrewassignment, delete_flight, delete_passenger, delete_paymnet
+from main.dao.adapters import delete_user_by_id, delete_airline_by_id, delete_bookingdetail_by_id, delete_booking_by_id, delete_crew_by_id, \
+    delete_crewrole_by_id, delete_flightcrewassignment_by_id, delete_flight_by_id, delete_passenger_by_id, delete_paymnet_by_id
 from main.dao.models import User, Airline, BookingDetail, Booking, Crew, CrewRole, FlightCrewAssignment, Flight, Passenger, Payment
 #Courtesy https://testdriven.io/blog/flask-pytest/
 # from datetime import datetime
@@ -538,7 +538,7 @@ def test_user_delete(db_session):
     TESTS SQLAlchemy setup for Update
     """
     u = User.query.filter_by(email='john.doe@email.com').first()
-    delete_user(db_session, u.user_id)
+    delete_user_by_id(db_session, u.user_id)
 
     u2 = User.query.filter_by(email='john.doe@email.com').first()
     assert not u2
@@ -551,7 +551,7 @@ def test_delete_airline(db_session):
 
     TESTS SQLAlchemy setup for Update
     """
-    delete_airline(db_session, 1, True)
+    delete_airline_by_id(db_session, 1, True)
 
     u2 = Airline.query.get(1)
     assert not u2
@@ -564,7 +564,7 @@ def test_delete_bookingdetail(db_session):
 
     TESTS SQLAlchemy setup for Update
     """
-    delete_bookingdetail(db_session, 1, True)
+    delete_bookingdetail_by_id(db_session, 1, True)
 
     u2 = BookingDetail.query.get(1)
     assert not u2
@@ -577,7 +577,7 @@ def test_delete_booking(db_session):
 
     TESTS SQLAlchemy setup for Update
     """
-    delete_booking(db_session, 1, True)
+    delete_booking_by_id(db_session, 1, True)
 
     u2 = Booking.query.get(1)
     assert not u2
@@ -590,7 +590,7 @@ def test_delete_crew(db_session):
 
     TESTS SQLAlchemy setup for Update
     """
-    delete_crew(db_session, 1, True)
+    delete_crew_by_id(db_session, 1, True)
 
     u2 = Crew.query.get(1)
     assert not u2
@@ -603,7 +603,7 @@ def test_delete_crewrole(db_session):
 
     TESTS SQLAlchemy setup for Update
     """
-    delete_crewrole(db_session, 1, True)
+    delete_crewrole_by_id(db_session, 1, True)
 
     u2 = CrewRole.query.get(1)
     assert not u2
@@ -616,7 +616,7 @@ def test_delete_flightcrewassignment(db_session):
 
     TESTS SQLAlchemy setup for Update
     """
-    delete_flightcrewassignment(db_session, 1)
+    delete_flightcrewassignment_by_id(db_session, 1)
 
     u2 = FlightCrewAssignment.query.get(1)
     assert not u2
@@ -629,7 +629,7 @@ def test_delete_flight(db_session):
 
     TESTS SQLAlchemy setup for Update
     """
-    delete_flight(db_session, 1)
+    delete_flight_by_id(db_session, 1)
 
     u2 = Flight.query.get(1)
     assert not u2
@@ -642,7 +642,7 @@ def test_delete_passenger(db_session):
 
     TESTS SQLAlchemy setup for Update
     """
-    delete_passenger(db_session, 1)
+    delete_passenger_by_id(db_session, 1)
 
     u2 = Passenger.query.get(1)
     assert not u2
@@ -655,7 +655,7 @@ def test_delete_payment(db_session):
 
     TESTS SQLAlchemy setup for Update
     """
-    delete_paymnet(db_session, 1)
+    delete_paymnet_by_id(db_session, 1)
 
     u2 = Payment.query.get(1)
     assert not u2
