@@ -5,18 +5,15 @@ from main.service.controllers import (
     create_user_controller,
     create_booking_controller,
     create_flight_controller,
-    create_crew_controller,
     search_flights_controller,
     get_user_profile_controller,
     get_booking_history_controller,
     get_airline_dashboard_controller,
     update_user_profile_controller,
     modify_booking_controller,
-    update_flight_schedule_controller,
     update_crew_assignment_controller,
     cancel_booking_controller,
     delete_user_account_controller,
-    remove_outdated_data_controller,
     get_crew_assignment_controller,
     login_controller,
     get_user_id_from_token,
@@ -41,7 +38,6 @@ def list_entities(name):
 
 @urls_bp.route("/login", methods=['POST'])
 def login():
-    print("Login")
     return login_controller()
 
 # User endpoints
@@ -52,6 +48,10 @@ def create_user():
         print("What's Options precious?")
         return jsonify({"message": "CORS preflight successful"}), 200
     return create_user_controller()
+
+@urls_bp.route("/users/<int:user_id>/delete", methods=['DELETE'])
+def delete_user(user_id):
+    return delete_user_account_controller(user_id)
 
 @urls_bp.route("/users", methods=['GET', 'PUT'])
 def user_operations():
@@ -98,31 +98,18 @@ def create_flight():
 def search_flights():
     return search_flights_controller()
 
-@urls_bp.route("/flights/<int:flight_id>", methods=['PUT'])
-def update_flight(flight_id):fetch_roles_controller
-@urls_bp.route("/addcrew", methods=['POST'])
-def create_crew():
-    return create_crew_controller()
-
 @urls_bp.route("/flights/<int:flight_id>/crew", methods=['GET'])
-def get_crew(flight_id):
+def get_crew_by_flight(flight_id):
     return get_crew_assignment_controller(flight_id)
 
 @urls_bp.route("/flights/<int:flight_id>/crew", methods=['PUT'])
-def update_crew(flight_id):
+def update_crew_by_flight(flight_id):
     return update_crew_assignment_controller(flight_id)
 
 # Airline endpoints
 @urls_bp.route("/airlines/<int:airline_id>", methods=['GET'])
 def airline_dashboard(airline_id):
     return get_airline_dashboard_controller(airline_id)
-
-# Administrative deletion of outdated data
-@urls_bp.route("/admin/cleanup", methods=['DELETE'])
-def admin_cleanup():fetch_roles_controller
-@urls_bp.route("/users/<int:user_id>/delete", methods=['DELETE'])
-def delete_user(user_id):
-    return delete_user_account_controller(user_id)
 
 @urls_bp.route("/airlines", methods=['GET'])
 def get_airlines():
@@ -131,7 +118,6 @@ def get_airlines():
 @urls_bp.route("/flights_by_airlines/<airline_id>")
 def fetch_flights_by_airline_id(airline_id):
     return fetch_airlines(airline_id)
-# Generic error for unsupported methods at any endpoint
 
 @urls_bp.route("/getCrew", methods=['GET'])
 def getCrew():
@@ -152,8 +138,3 @@ def fetch_flights():
 @urls_bp.route("/roles", methods=['GET'])
 def fetch_roles():
     return fetch_roles_controller()
-
-@urls_bp.errorhandler(405)
-def method_not_allowed(e):
-    return "Method is Not Allowed", 405
-
