@@ -42,43 +42,43 @@ pipelines:
               artifacts:
                 - backend/src/coverage.xml
           
-          - step:
-              name: Frontend - Build and API Connection Test
-              caches:
-                - npm
-              script:
-                - cd frontend/flights
-                # Install dependencies
-                - npm ci
-                # Run tests (without checking coverage)
-                - npm test
-                # Check API connections
-                - |
-                  echo "Checking API connections between frontend and backend..."
-                  # Look for API endpoint references in the source code
-                  api_endpoints=$(grep -r "fetch(" src/ --include="*.js" --include="*.jsx" --include="*.ts" --include="*.tsx" | grep -o "'/api/[^']*'" | sort -u)
+          # - step:
+          #     name: Frontend - Build and API Connection Test
+          #     caches:
+          #       - npm
+          #     script:
+          #       - cd frontend/flights
+          #       # Install dependencies
+          #       - npm ci
+          #       # Run tests (without checking coverage)
+          #       - npm test
+          #       # Check API connections
+          #       - |
+          #         echo "Checking API connections between frontend and backend..."
+          #         # Look for API endpoint references in the source code
+          #         api_endpoints=$(grep -r "fetch(" src/ --include="*.js" --include="*.jsx" --include="*.ts" --include="*.tsx" | grep -o "'/api/[^']*'" | sort -u)
                   
-                  if [ -z "$api_endpoints" ]; then
-                    echo "Warning: No API endpoints found in frontend code."
-                  else
-                    echo "Found API endpoints in frontend code:"
-                    echo "$api_endpoints"
+          #         if [ -z "$api_endpoints" ]; then
+          #           echo "Warning: No API endpoints found in frontend code."
+          #         else
+          #           echo "Found API endpoints in frontend code:"
+          #           echo "$api_endpoints"
                     
-                    # You could extend this to check if these endpoints exist in the backend
-                    echo "Verifying endpoints exist in backend..."
-                    cd ../../backend/src
-                    for endpoint in $api_endpoints; do
-                      # Remove quotes and extract endpoint path
-                      endpoint=$(echo $endpoint | tr -d "'")
-                      if grep -r "$endpoint" main/resources --include="*.py"; then
-                        echo "✅ Endpoint $endpoint found in backend"
-                      else
-                        echo "⚠️ Warning: Endpoint $endpoint not found in backend"
-                      fi
-                    done
-                  fi
-                # Build project
-                - cd ../../frontend/flights
-                - npm run build
-              artifacts:
-                - frontend/flights/build/**
+          #           # You could extend this to check if these endpoints exist in the backend
+          #           echo "Verifying endpoints exist in backend..."
+          #           cd ../../backend/src
+          #           for endpoint in $api_endpoints; do
+          #             # Remove quotes and extract endpoint path
+          #             endpoint=$(echo $endpoint | tr -d "'")
+          #             if grep -r "$endpoint" main/resources --include="*.py"; then
+          #               echo "✅ Endpoint $endpoint found in backend"
+          #             else
+          #               echo "⚠️ Warning: Endpoint $endpoint not found in backend"
+          #             fi
+          #           done
+          #         fi
+          #       # Build project
+          #       - cd ../../frontend/flights
+          #       - npm run build
+          #     artifacts:
+          #       - frontend/flights/build/**

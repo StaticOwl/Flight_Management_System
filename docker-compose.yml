@@ -12,3 +12,16 @@ services:
       - FLASK_ENV=development
       - FLASK_DEBUG=1
     restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend/flights:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+    restart: unless-stopped
