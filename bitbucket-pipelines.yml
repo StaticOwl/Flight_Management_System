@@ -1,0 +1,84 @@
+# This is a sample build configuration for building and testing a Python backend and React frontend.
+image: atlassian/default-image:3
+
+definitions:
+  caches:
+    pip: ~/.cache/pip
+    npm: ~/.npm
+
+pipelines:
+  pull-requests:
+    '**':
+      - parallel:
+          - step:
+              name: Backend - Build and Test
+              caches:
+                - pip
+              script:
+                - cd backend
+                # Create and activate conda environment if needed
+                - |
+                  if [ -f "environment.yml" ]; then
+                    wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
+                    bash miniconda.sh -b -p $HOME/miniconda
+                    export PATH="$HOME/miniconda/bin:$PATH"
+                    conda env create -f environment.yml
+                    source activate $(head -1 environment.yml | cut -d' ' -f2)
+                  fi
+                # Install requirements
+                - pip install -r requirements.txt
+                # Install test dependencies
+                - pip install pytest pytest-cov
+                # Run tests with coverage
+                - cd src
+                - python -m pytest tests/ --cov=main --cov-report=xml --cov-report=term
+                # Fail if coverage is below 90%
+                - |
+                  coverage=$(python -c "import xml.etree.ElementTree as ET; tree = ET.parse('coverage.xml'); root = tree.getroot(); print(float(root.attrib['line-rate']) * 100)")
+                  if (( $(echo "$coverage < 90" | bc -l) )); then 
+                    echo "Coverage is below 90%. Current coverage: $coverage%"
+                    exit 1
+                  fi
+              artifacts:
+                - backend/src/coverage.xml
+          
+          # - step:
+          #     name: Frontend - Build and API Connection Test
+          #     caches:
+          #       - npm
+          #     script:
+          #       - cd frontend/flights
+          #       # Install dependencies
+          #       - npm ci
+          #       # Run tests (without checking coverage)
+          #       - npm test
+          #       # Check API connections
+          #       - |
+          #         echo "Checking API connections between frontend and backend..."
+          #         # Look for API endpoint references in the source code
+          #         api_endpoints=$(grep -r "fetch(" src/ --include="*.js" --include="*.jsx" --include="*.ts" --include="*.tsx" | grep -o "'/api/[^']*'" | sort -u)
+                  
+          #         if [ -z "$api_endpoints" ]; then
+          #           echo "Warning: No API endpoints found in frontend code."
+          #         else
+          #           echo "Found API endpoints in frontend code:"
+          #           echo "$api_endpoints"
+                    
+          #           # You could extend this to check if these endpoints exist in the backend
+          #           echo "Verifying endpoints exist in backend..."
+          #           cd ../../backend/src
+          #           for endpoint in $api_endpoints; do
+          #             # Remove quotes and extract endpoint path
+          #             endpoint=$(echo $endpoint | tr -d "'")
+          #             if grep -r "$endpoint" main/resources --include="*.py"; then
+          #               echo "✅ Endpoint $endpoint found in backend"
+          #             else
+          #               echo "⚠️ Warning: Endpoint $endpoint not found in backend"
+          #             fi
+          #           done
+          #         fi
+          #       # Build project
+          #       - cd ../../frontend/flights
+          #       - npm run build
+          #     artifacts:
+          #       - frontend/flights/build/**
