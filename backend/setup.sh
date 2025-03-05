@@ -24,9 +24,11 @@ if ! podman info &> /dev/null; then
   exit 1
 fi
 
+ENV=${1:-dev}
+
 # Load environment variables from .env files
-if [ -d "$SCRIPT_DIR/envs" ] && ls "$SCRIPT_DIR/envs"/*.env 1> /dev/null 2>&1; then
-  for env_file in "$SCRIPT_DIR/envs"/*.env; do
+if [ -d "$SCRIPT_DIR/envs" ] && ls "$SCRIPT_DIR/envs"/"$ENV".env 1> /dev/null 2>&1; then
+  for env_file in "$SCRIPT_DIR/envs"/$ENV.env; do
     # shellcheck disable=SC2046
     export $(grep -v '^#' "$env_file" | xargs)
   done
@@ -34,6 +36,9 @@ else
   echo "Error: No .env files found in the envs folder!"
   exit 1
 fi
+
+DATABASE_URL="postgresql+psycopg2://$POSTGRES_USER:$POSTGRES_PASSWORD@$POSTGRES_HOST:$POSTGRES_PORT/$POSTGRES_DB"
+
 
 # Create Podman network if it doesn’t exist
 echo "Creating network (if not exists)..."
@@ -83,6 +88,7 @@ podman run -d --name flight_service --network flight_network -p 5000:5000 \
   -e POSTGRES_DB="$POSTGRES_DB" \
   -e POSTGRES_HOST="$POSTGRES_HOST" \
   -e POSTGRES_PORT="$POSTGRES_PORT" \
+  -e DATABASE_URL="$DATABASE_URL"  \
   flight_backend
 
 # Show running containers

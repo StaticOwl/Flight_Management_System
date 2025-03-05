@@ -12,16 +12,16 @@ def test_database_tables_exist(db_session):
     tables = set(inspector.get_table_names())
     
     expected_tables = {
-        'users',
-        'airlines',
-        'flights',
-        'crew',
-        'crew_roles',
-        'bookings',
-        'booking_details',
-        'passengers',
-        'payments',
-        'flight_crew_assignments'
+        'Users',
+        'Airlines',
+        'Flights',
+        'Crew',
+        'CrewRoles',
+        'Bookings',
+        'BookingDetails',
+        'Passengers',
+        'Payments',
+        'FlightCrewAssignments'
     }
     
     assert expected_tables.issubset(tables), f"Missing tables: {expected_tables - tables}"
@@ -31,11 +31,11 @@ def test_table_columns(db_session):
     inspector = inspect(db_session.get_bind())
     
     # Test User table columns
-    user_columns = {col['name'] for col in inspector.get_columns('users')}
+    user_columns = {col['name'] for col in inspector.get_columns('Users')}
     assert user_columns == {'user_id', 'first_name', 'last_name', 'email', 'password', 'phone', 'address'}
 
     # Test Flight table columns
-    flight_columns = {col['name'] for col in inspector.get_columns('flights')}
+    flight_columns = {col['name'] for col in inspector.get_columns('Flights')}
     assert flight_columns == {
         'flight_id', 'airline_id', 'flight_number', 'departure_airport',
         'arrival_airport', 'departure_time', 'arrival_time', 'aircraft_type',
@@ -43,7 +43,7 @@ def test_table_columns(db_session):
     }
 
     # Test BookingDetail table columns
-    booking_columns = {col['name'] for col in inspector.get_columns('booking_details')}
+    booking_columns = {col['name'] for col in inspector.get_columns('BookingDetails')}
     assert booking_columns == {'booking_details_id', 'booking_id', 'flight_id', 'booking_date', 'num_passengers', 'total_cost'}
 
 
