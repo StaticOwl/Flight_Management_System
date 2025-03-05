@@ -36,11 +36,11 @@ def delete_booking_detail_by_id(db_session, booking_detail_id, cascade = False):
             for ps in passengers:
                 delete_passenger_by_id(db_session, ps.passenger_id)
 
-            pays = Payment.query.filter_by(booking_detail_id=booking_detail_id).all()
+            pays = Payment.query.filter_by(booking_details_id=booking_detail_id).all()
 
             for py in pays:
                 delete_paymnet_by_id(db_session, py.payment_id, cascade)
-        BookingDetail.query.filter_by(booking_detail_id=booking_detail_id).delete()
+        BookingDetail.query.filter_by(booking_details_id=booking_detail_id).delete()
         db_session.commit()
     except Exception as e:
         print(e)
