@@ -4,15 +4,13 @@ WORKDIR /app
 
 # Copy environment.yml file and requirements.txt
 COPY environment.yml ./
-COPY requirements.txt ./
 
-# Create conda environment
-RUN conda env create -f environment.yml
+# Create conda environment and activate it
+RUN conda env create -f environment.yml && \
+    echo "source activate flights" >> ~/.bashrc
 
-# Make RUN commands use the new environment and install Flask and other requirements
-SHELL ["conda", "run", "-n", "base", "/bin/bash", "-c"]
-RUN pip install -r requirements.txt
-RUN pip install flask
+# Ensure the conda environment is activated in non-interactive shells
+SHELL ["/bin/bash", "--login", "-c"]
 
 # Copy the rest of the application
 COPY . .
@@ -24,4 +22,4 @@ EXPOSE 5000
 ENV PYTHONPATH=/app:/app/src
 
 # Command to run the application
-CMD ["conda", "run", "--no-capture-output", "-n", "base", "python", "/app/src/main/app.py"]
+CMD ["conda", "run", "--no-capture-output", "-n", "flights", "python", "/app/src/main/app.py"]

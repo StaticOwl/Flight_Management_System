@@ -30,7 +30,7 @@ dependencies:
       - python-dotenv==1.0.1
       - pytz==2019.3
       - schwifty==2020.2.2
-      - setuptools==75.8.0
+      - setuptools
       - SQLAlchemy==2.0.37
       - typing_extensions==4.12.2
       - Werkzeug==3.1.3
