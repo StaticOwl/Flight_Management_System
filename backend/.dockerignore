@@ -1,0 +1,16 @@
+# Ignore Python cache & environment files
+__pycache__/
+*.pyc
+*.pyo
+venv/
+env/
+
+# Ignore Git stuff
+.git/
+.gitignore
+
+# Ignore logs
+*.log
+
+# Ignore Podman leftovers
+tmp/

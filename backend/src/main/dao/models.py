@@ -5,7 +5,7 @@ from sqlalchemy.orm import relationship
 from main.__init__ import db
 
 class User(db.Model):
-    __tablename__ = 'users'
+    __tablename__ = 'Users'
     user_id = db.Column(db.Integer, primary_key=True)
     first_name = db.Column(db.String(50), nullable=False)
     last_name = db.Column(db.String(50), nullable=False)
@@ -19,7 +19,7 @@ class User(db.Model):
         return {c.key: getattr(self, c.key) for c in inspect(self).mapper.column_attrs}
 
 class Airline(db.Model):
-    __tablename__ = 'airlines'
+    __tablename__ = 'Airlines'
     airline_id = db.Column(db.Integer, primary_key=True)
     airline_name = db.Column(db.String(100), nullable=False)
     contact_email = db.Column(db.String(100))
@@ -30,9 +30,9 @@ class Airline(db.Model):
         return {c.key: getattr(self, c.key) for c in inspect(self).mapper.column_attrs}
 
 class Flight(db.Model):
-    __tablename__ = 'flights'
+    __tablename__ = 'Flights'
     flight_id = db.Column(db.Integer, primary_key=True)
-    airline_id = db.Column(db.Integer, db.ForeignKey('airlines.airline_id'), nullable=False)
+    airline_id = db.Column(db.Integer, db.ForeignKey('Airlines.airline_id'), nullable=False)
     flight_number = db.Column(db.String(10), nullable=False)
     departure_airport = db.Column(db.String(100), nullable=False)
     arrival_airport = db.Column(db.String(100), nullable=False)
@@ -50,7 +50,7 @@ class Flight(db.Model):
         return {c.key: getattr(self, c.key) for c in inspect(self).mapper.column_attrs}
 
 class Crew(db.Model):
-    __tablename__ = 'crew'
+    __tablename__ = 'Crew'
     crew_id = db.Column(db.Integer, primary_key=True)
     first_name = db.Column(db.String(50), nullable=False)
     last_name = db.Column(db.String(50), nullable=False)
@@ -61,7 +61,7 @@ class Crew(db.Model):
 
 
 class CrewRole(db.Model):
-    __tablename__ = 'crew_roles'
+    __tablename__ = 'CrewRoles'
     role_id = db.Column(db.Integer, primary_key=True)
     role_name = db.Column(db.String(50), nullable=False)
     flight_crew_assignments = relationship('FlightCrewAssignment', back_populates='crew_role')
@@ -71,9 +71,9 @@ class CrewRole(db.Model):
 
 
 class Booking(db.Model):
-    __tablename__ = 'bookings'
+    __tablename__ = 'Bookings'
     booking_id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('Users.user_id'), nullable=False)
     user = relationship('User', back_populates='bookings')
     booking_details = relationship('BookingDetail', back_populates='booking', uselist=False)
     
@@ -81,10 +81,10 @@ class Booking(db.Model):
         return {c.key: getattr(self, c.key) for c in inspect(self).mapper.column_attrs}
 
 class BookingDetail(db.Model):
-    __tablename__ = 'booking_details'
+    __tablename__ = 'BookingDetails'
     booking_details_id = db.Column(db.Integer, primary_key=True)
-    booking_id = db.Column(db.Integer, db.ForeignKey('bookings.booking_id'), nullable=False)
-    flight_id = db.Column(db.Integer, db.ForeignKey('flights.flight_id'), nullable=False)
+    booking_id = db.Column(db.Integer, db.ForeignKey('Bookings.booking_id'), nullable=False)
+    flight_id = db.Column(db.Integer, db.ForeignKey('Flights.flight_id'), nullable=False)
     booking_date = db.Column(db.Date, nullable=False)
     num_passengers = db.Column(db.Integer, nullable=False)
     total_cost = db.Column(db.Numeric(10, 2), nullable=False)
@@ -98,9 +98,9 @@ class BookingDetail(db.Model):
 
 
 class Passenger(db.Model):
-    __tablename__ = 'passengers'
+    __tablename__ = 'Passengers'
     passenger_id = db.Column(db.Integer, primary_key=True)
-    booking_details_id = db.Column(db.Integer, db.ForeignKey('booking_details.booking_details_id'), nullable=False)
+    booking_details_id = db.Column(db.Integer, db.ForeignKey('BookingDetails.booking_details_id'), nullable=False)
     first_name = db.Column(db.String(50), nullable=False)
     last_name = db.Column(db.String(50), nullable=False)
     date_of_birth = db.Column(db.Date, nullable=False)
@@ -111,9 +111,9 @@ class Passenger(db.Model):
 
 
 class Payment(db.Model):
-    __tablename__ = 'payments'
+    __tablename__ = 'Payments'
     payment_id = db.Column(db.Integer, primary_key=True)
-    booking_details_id = db.Column(db.Integer, db.ForeignKey('booking_details.booking_details_id'), nullable=False)
+    booking_details_id = db.Column(db.Integer, db.ForeignKey('BookingDetails.booking_details_id'), nullable=False)
     payment_date = db.Column(db.Date, nullable=False)
     amount = db.Column(db.Numeric(10, 2), nullable=False)
     payment_method = db.Column(db.String(50), nullable=False)
@@ -124,11 +124,11 @@ class Payment(db.Model):
 
 
 class FlightCrewAssignment(db.Model):
-    __tablename__ = 'flight_crew_assignments'
+    __tablename__ = 'FlightCrewAssignments'
     id = db.Column(db.Integer, primary_key=True)
-    flight_id = db.Column(db.Integer, db.ForeignKey('flights.flight_id'), nullable=False)
-    crew_id = db.Column(db.Integer, db.ForeignKey('crew.crew_id'), nullable=False)
-    role_id = db.Column(db.Integer, db.ForeignKey('crew_roles.role_id'), nullable=False)
+    flight_id = db.Column(db.Integer, db.ForeignKey('Flights.flight_id'), nullable=False)
+    crew_id = db.Column(db.Integer, db.ForeignKey('Crew.crew_id'), nullable=False)
+    role_id = db.Column(db.Integer, db.ForeignKey('CrewRoles.role_id'), nullable=False)
     flight = relationship('Flight', back_populates='flight_crew_assignments')
     crew = relationship('Crew', back_populates='flight_crew_assignments')
     crew_role = relationship('CrewRole', back_populates='flight_crew_assignments')

@@ -1,4 +1,4 @@
-from models import User, Airline, BookingDetail, Booking, Crew, CrewRole, FlightCrewAssignment, Flight, Passenger, Payment
+from .models import User, Airline, BookingDetail, Booking, Crew, CrewRole, FlightCrewAssignment, Flight, Passenger, Payment
 
 def delete_user_by_id(db_session, user_id):
     try:
@@ -25,22 +25,22 @@ def delete_airline_by_id(db_session, airline_id, cascade = False):
         print(e)
         raise
 
-def delete_bookingdetail_by_id(db_session, bookingdetail_id, cascade = False):
+def delete_booking_detail_by_id(db_session, booking_detail_id, cascade = False):
     #ref'd in Passengers, Payments
     try:
         if cascade:
             print("Cascading")
             # Get all Passengers ref'ing booking detail
-            passengers = Passenger.query.filter_by(booking_details_id=bookingdetail_id).all()
+            passengers = Passenger.query.filter_by(booking_details_id=booking_detail_id).all()
             # For each flight, delete that flight
             for ps in passengers:
                 delete_passenger_by_id(db_session, ps.passenger_id)
 
-            pays = Payment.query.filter_by(booking_detail_id=bookingdetail_id).all()
+            pays = Payment.query.filter_by(booking_details_id=booking_detail_id).all()
 
             for py in pays:
                 delete_paymnet_by_id(db_session, py.payment_id, cascade)
-        BookingDetail.query.filter_by(booking_detail_id=bookingdetail_id).delete()
+        BookingDetail.query.filter_by(booking_details_id=booking_detail_id).delete()
         db_session.commit()
     except Exception as e:
         print(e)
@@ -56,7 +56,7 @@ def delete_booking_by_id(db_session, booking_id, cascade = False):
             bookingdetails = BookingDetail.query.filter_by(booking_id=booking_id).all()
             # For each flight, delete that flight
             for b in bookingdetails:
-                delete_bookingdetail_by_id(db_session, b.booking_detail_id, cascade)
+                delete_booking_detail_by_id(db_session, b.booking_details_id, cascade)
         Booking.query.filter_by(booking_id=booking_id).delete()
         db_session.commit()
     except Exception as e:
@@ -115,7 +115,7 @@ def delete_flight_by_id(db_session, flight_id, cascade = False):
             bookingdetails = BookingDetail.query.filter_by(flight_id=flight_id).all()
             # For each flight, delete that flight
             for b in bookingdetails:
-                delete_bookingdetail_by_id(db_session, b.booking_detail_id, cascade)
+                delete_booking_detail_by_id(db_session, b.booking_details_id, cascade)
 
             flightcrewassignments = FlightCrewAssignment.query.filter_by(flight_id=flight_id).all()
 

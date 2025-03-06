@@ -4,20 +4,20 @@ from flask_migrate import Migrate
 from flask_cors import CORS
 import os
 
-from dotenv import load_dotenv
-load_dotenv()
-
 from config.config import config
 
 print("Creating App")
 db = SQLAlchemy()
 migrate = Migrate()
 
-def create_app(config_mode="development"):
+def create_app():
+    config_mode = os.getenv('FLASK_ENV', 'dev')
+    print(f"{os.getenv("DATABASE_URL")}")
     app = Flask(__name__)
     app.config.from_object(config[config_mode])
 
     print(f"Running in {config_mode} mode")
+    print(f"Config: {app.config}")
     print(f"Database URI: {app.config.get('SQLALCHEMY_DATABASE_URI', 'Not Set')}")
 
     db.init_app(app)

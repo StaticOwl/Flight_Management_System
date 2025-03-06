@@ -1,4 +1,5 @@
 import pytest
+import uuid
 
 def get_auth_token(test_client, db_session, user_id=1):
     """
@@ -14,7 +15,7 @@ def get_auth_token(test_client, db_session, user_id=1):
             user_id=user_id,
             first_name="Test",
             last_name="User",
-            email="test.user@email.com",
+            email=f"user_{uuid.uuid4().hex[:8]}@email.com",
             password=generate_password_hash("password123"),
             phone="1234567890",
             address="Test Address"
