@@ -12,16 +12,16 @@ def test_database_tables_exist(db_session):
     tables = set(inspector.get_table_names())
     
     expected_tables = {
-        'Users',
-        'Airlines',
-        'Flights',
-        'Crew',
-        'CrewRoles',
-        'Bookings',
-        'BookingDetails',
-        'Passengers',
-        'Payments',
-        'FlightCrewAssignments'
+        'users',
+        'airlines',
+        'flights',
+        'crews',
+        'crewroles',
+        'bookings',
+        'bookingdetails',
+        'passengers',
+        'payments',
+        'flightcrewassignments'
     }
     
     assert expected_tables.issubset(tables), f"Missing tables: {expected_tables - tables}"
@@ -90,4 +90,4 @@ def test_create_airline_and_flight(db_session):
 
     retrieved_flight = db_session.query(Flight).filter_by(flight_number='TEST123').first()
     assert retrieved_flight is not None
-    assert retrieved_flight.airline.airline_name == 'Test Airline'
+    assert retrieved_flight.airline_ref.airline_name == 'Test Airline'
