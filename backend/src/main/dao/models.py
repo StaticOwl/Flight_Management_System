@@ -5,7 +5,7 @@ from sqlalchemy.orm import relationship
 from main.__init__ import db
 
 class User(db.Model):
-    __tablename__ = 'Users'
+    __tablename__ = 'users'
     user_id = db.Column(db.Integer, primary_key=True)
     first_name = db.Column(db.String(50), nullable=False)
     last_name = db.Column(db.String(50), nullable=False)
@@ -13,26 +13,26 @@ class User(db.Model):
     password = db.Column(db.String(100000), nullable=False)
     phone = db.Column(db.String(20))
     address = db.Column(db.String(200))
-    bookings = relationship('Booking', back_populates='user')
+    booking_ref = relationship('Booking', back_populates='user_ref')
     
     def to_dict(self):
         return {c.key: getattr(self, c.key) for c in inspect(self).mapper.column_attrs}
 
 class Airline(db.Model):
-    __tablename__ = 'Airlines'
+    __tablename__ = 'airlines'
     airline_id = db.Column(db.Integer, primary_key=True)
     airline_name = db.Column(db.String(100), nullable=False)
     contact_email = db.Column(db.String(100))
     contact_phone = db.Column(db.String(20))
-    flights = relationship('Flight', back_populates='airline')
+    flight_ref = relationship('Flight', back_populates='airline_ref')
     
     def to_dict(self):
         return {c.key: getattr(self, c.key) for c in inspect(self).mapper.column_attrs}
 
 class Flight(db.Model):
-    __tablename__ = 'Flights'
+    __tablename__ = 'flights'
     flight_id = db.Column(db.Integer, primary_key=True)
-    airline_id = db.Column(db.Integer, db.ForeignKey('Airlines.airline_id'), nullable=False)
+    airline_id = db.Column(db.Integer, db.ForeignKey('airlines.airline_id'), nullable=False)
     flight_number = db.Column(db.String(10), nullable=False)
     departure_airport = db.Column(db.String(100), nullable=False)
     arrival_airport = db.Column(db.String(100), nullable=False)
@@ -41,97 +41,97 @@ class Flight(db.Model):
     aircraft_type = db.Column(db.String(50), nullable=False)
     num_seats = db.Column(db.Integer, nullable=False)
     price_per_seat = db.Column(db.Float, nullable=True)
-    airline = relationship('Airline', back_populates='flights')
-    booking_details = relationship('BookingDetail', back_populates='flight')
-    flight_crew_assignments = relationship('FlightCrewAssignment', back_populates='flight')
+    airline_ref = relationship('Airline', back_populates='flight_ref')
+    booking_detail_ref = relationship('BookingDetail', back_populates='flight_ref')
+    flight_crew_assignment_ref = relationship('FlightCrewAssignment', back_populates='flight_ref')
 
     
     def to_dict(self):
         return {c.key: getattr(self, c.key) for c in inspect(self).mapper.column_attrs}
 
 class Crew(db.Model):
-    __tablename__ = 'Crew'
+    __tablename__ = 'crews'
     crew_id = db.Column(db.Integer, primary_key=True)
     first_name = db.Column(db.String(50), nullable=False)
     last_name = db.Column(db.String(50), nullable=False)
-    flight_crew_assignments = relationship('FlightCrewAssignment', back_populates='crew')
+    flight_crew_assignment_ref = relationship('FlightCrewAssignment', back_populates='crew_ref')
     
     def to_dict(self):
         return {c.key: getattr(self, c.key) for c in inspect(self).mapper.column_attrs}
 
 
 class CrewRole(db.Model):
-    __tablename__ = 'CrewRoles'
+    __tablename__ = 'crewroles'
     role_id = db.Column(db.Integer, primary_key=True)
     role_name = db.Column(db.String(50), nullable=False)
-    flight_crew_assignments = relationship('FlightCrewAssignment', back_populates='crew_role')
+    flight_crew_assignment_ref = relationship('FlightCrewAssignment', back_populates='crew_role_ref')
     
     def to_dict(self):
         return {c.key: getattr(self, c.key) for c in inspect(self).mapper.column_attrs}
 
 
 class Booking(db.Model):
-    __tablename__ = 'Bookings'
+    __tablename__ = 'bookings'
     booking_id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('Users.user_id'), nullable=False)
-    user = relationship('User', back_populates='bookings')
-    booking_details = relationship('BookingDetail', back_populates='booking', uselist=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
+    user_ref = relationship('User', back_populates='booking_ref')
+    booking_detail_ref = relationship('BookingDetail', back_populates='booking_ref', uselist=False)
     
     def to_dict(self):
         return {c.key: getattr(self, c.key) for c in inspect(self).mapper.column_attrs}
 
 class BookingDetail(db.Model):
-    __tablename__ = 'BookingDetails'
+    __tablename__ = 'bookingdetails'
     booking_details_id = db.Column(db.Integer, primary_key=True)
-    booking_id = db.Column(db.Integer, db.ForeignKey('Bookings.booking_id'), nullable=False)
-    flight_id = db.Column(db.Integer, db.ForeignKey('Flights.flight_id'), nullable=False)
+    booking_id = db.Column(db.Integer, db.ForeignKey('bookings.booking_id'), nullable=False)
+    flight_id = db.Column(db.Integer, db.ForeignKey('flights.flight_id'), nullable=False)
     booking_date = db.Column(db.Date, nullable=False)
     num_passengers = db.Column(db.Integer, nullable=False)
     total_cost = db.Column(db.Numeric(10, 2), nullable=False)
-    booking = relationship('Booking', back_populates='booking_details')
-    flight = relationship('Flight', back_populates='booking_details')
-    passengers = relationship('Passenger', back_populates='booking_detail')
-    payments = relationship('Payment', back_populates='booking_detail')
+    booking_ref = relationship('Booking', back_populates='booking_detail_ref')
+    flight_ref = relationship('Flight', back_populates='booking_detail_ref')
+    passenger_ref = relationship('Passenger', back_populates='booking_detail_ref')
+    payment_ref = relationship('Payment', back_populates='booking_detail_ref')
     
     def to_dict(self):
         return {c.key: getattr(self, c.key) for c in inspect(self).mapper.column_attrs}
 
 
 class Passenger(db.Model):
-    __tablename__ = 'Passengers'
+    __tablename__ = 'passengers'
     passenger_id = db.Column(db.Integer, primary_key=True)
-    booking_details_id = db.Column(db.Integer, db.ForeignKey('BookingDetails.booking_details_id'), nullable=False)
+    booking_details_id = db.Column(db.Integer, db.ForeignKey('bookingdetails.booking_details_id'), nullable=False)
     first_name = db.Column(db.String(50), nullable=False)
     last_name = db.Column(db.String(50), nullable=False)
     date_of_birth = db.Column(db.Date, nullable=False)
-    booking_detail = relationship('BookingDetail', back_populates='passengers')
+    booking_detail_ref = relationship('BookingDetail', back_populates='passenger_ref')
     
     def to_dict(self):
         return {c.key: getattr(self, c.key) for c in inspect(self).mapper.column_attrs}
 
 
 class Payment(db.Model):
-    __tablename__ = 'Payments'
+    __tablename__ = 'payments'
     payment_id = db.Column(db.Integer, primary_key=True)
-    booking_details_id = db.Column(db.Integer, db.ForeignKey('BookingDetails.booking_details_id'), nullable=False)
+    booking_details_id = db.Column(db.Integer, db.ForeignKey('bookingdetails.booking_details_id'), nullable=False)
     payment_date = db.Column(db.Date, nullable=False)
     amount = db.Column(db.Numeric(10, 2), nullable=False)
     payment_method = db.Column(db.String(50), nullable=False)
-    booking_detail = relationship('BookingDetail', back_populates='payments')
+    booking_detail_ref = relationship('BookingDetail', back_populates='payment_ref')
 
     def to_dict(self):
         return {c.key: getattr(self, c.key) for c in inspect(self).mapper.column_attrs}
 
 
 class FlightCrewAssignment(db.Model):
-    __tablename__ = 'FlightCrewAssignments'
+    __tablename__ = 'flightcrewassignments'
     id = db.Column(db.Integer, primary_key=True)
-    flight_id = db.Column(db.Integer, db.ForeignKey('Flights.flight_id'), nullable=False)
-    crew_id = db.Column(db.Integer, db.ForeignKey('Crew.crew_id'), nullable=False)
-    role_id = db.Column(db.Integer, db.ForeignKey('CrewRoles.role_id'), nullable=False)
-    flight = relationship('Flight', back_populates='flight_crew_assignments')
-    crew = relationship('Crew', back_populates='flight_crew_assignments')
-    crew_role = relationship('CrewRole', back_populates='flight_crew_assignments')
+    flight_id = db.Column(db.Integer, db.ForeignKey('flights.flight_id'), nullable=False)
+    crew_id = db.Column(db.Integer, db.ForeignKey('crews.crew_id'), nullable=False)
+    role_id = db.Column(db.Integer, db.ForeignKey('crewroles.role_id'), nullable=False)
+    flight_ref = relationship('Flight', back_populates='flight_crew_assignment_ref')
+    crew_ref = relationship('Crew', back_populates='flight_crew_assignment_ref')
+    crew_role_ref = relationship('CrewRole', back_populates='flight_crew_assignment_ref')
         
     def to_dict(self):
         return {c.key: getattr(self, c.key) for c in inspect(self).mapper.column_attrs}

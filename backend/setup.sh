@@ -1,5 +1,7 @@
 #!/bin/bash
 
+export MSYS_NO_PATHCONV=1  # Workaround for Git Bash on Windows
+
 LOG_FILE="setup.log"
 exec > >(tee -a "$LOG_FILE") 2>&1  # Log output to setup.log
 
@@ -19,9 +21,13 @@ fi
 # Check if Podman is running
 if ! podman info &> /dev/null; then
   echo "Error: Podman is not running!"
-  echo "Try running: podman system connection list"
-  echo "If no connection is active, try: podman machine init && podman machine start"
-  exit 1
+  podman machine init
+  podman machine start
+  if ! podman info &> /dev/null; then
+    echo "Try running: podman system connection list"
+    echo "If no connection is active, try: podman machine init && podman machine start"
+    exit 1
+  fi
 fi
 
 ENV=${1:-dev}
