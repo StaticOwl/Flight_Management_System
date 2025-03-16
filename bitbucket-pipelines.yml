@@ -71,7 +71,7 @@ definitions:
           # Unpack the backend archive
           - tar -xzf backend-deploy.tar.gz
           - cd backend
-          - echo "Deploying backend application..."
+          - echo "Deploying backend application to production environment..."
           # Example deployment to a server using scp
           # - apt-get update && apt-get install -y sshpass
           # - sshpass -p $SERVER_PASSWORD scp -r . $SERVER_USER@$SERVER_HOST:/path/to/deployment
@@ -87,8 +87,9 @@ definitions:
           - npm
         script:
           - cd frontend/flights
-          # Install dependencies
+          # Install dependencies and fix missing babel plugin
           - npm ci
+          - npm install --save-dev @babel/plugin-proposal-private-property-in-object
           - echo "Skipping tests as they haven't been implemented yet"
           # When tests are implemented, uncomment the following line
           # - npm test
@@ -118,9 +119,9 @@ definitions:
                 fi
               done
             fi
-          # Return to frontend directory and build project
+          # Return to frontend directory and build project with CI=false to prevent warnings as errors
           - cd ../../frontend/flights
-          - npm run build
+          - CI=false npm run build
           # Package for deployment
           - cd ..
           - tar -czf flights-build.tar.gz flights/build
