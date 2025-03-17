@@ -1,4 +1,7 @@
-from flask import request, jsonify
+from flask import request, jsonify, current_app
+import requests
+import inspect
+from main.dao import models as models
 
 from main.service.controllers import (
     list_all_controller,
@@ -138,3 +141,24 @@ def fetch_flights():
 @urls_bp.route("/roles", methods=['GET'])
 def fetch_roles():
     return fetch_roles_controller()
+
+@urls_bp.route("/dbstatus", methods=['GET'])
+def status():
+    status_report = {}
+    base_url = request.host_url.rstrip('/')
+
+    models_list = [
+        name for name, cls in inspect.getmembers(models, inspect.isclass)
+        if hasattr(cls, '__tablename__') and cls.__module__ == models.__name__
+    ]
+
+    print(models_list)
+
+    for model in models_list:
+        try:
+            response = requests.get(f"{base_url}/api/{model}")
+            status_report[f"/api/{model}"] = f"{response.status_code}" if response.ok else f"{response.status_code}"
+        except Exception as e:
+            status_report[f"/api/{model}"] = f"Error: {str(e)}"
+
+    return jsonify(status_report)
