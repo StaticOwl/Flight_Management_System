@@ -82,12 +82,15 @@ def create_booking_controller():
     print(data)
     if not all(key in data for key in ['token', 'flight_id', 'booking_date', 'num_passengers', 'total_cost']):
         return jsonify({'message': 'Missing required fields'}), 400
+
+    if not db.session.get(Flight, data['flight_id']):
+        return jsonify({'message': 'Invalid flight'}), 400
     
     user_id = get_user_id_from_token(data['token'])['user_id']
     booking = Booking(user_id=user_id)
     db.session.add(booking)
     db.session.flush()  # Get the generated booking_id
-    
+
     latest_booking_detail = BookingDetail.query.order_by(BookingDetail.booking_details_id.desc()).first().to_dict()['booking_details_id']
     booking_detail = BookingDetail(
         booking_details_id=latest_booking_detail+1,
@@ -106,6 +109,8 @@ def create_flight_controller():
     data = request.get_json()
     if not all(key in data for key in ['airline_id', 'flight_number', 'departure_airport', 'arrival_airport', 'departure_time', 'arrival_time', 'aircraft_type', 'num_seats']):
         return jsonify({'message': 'Missing required fields'}), 400
+    if not db.session.get(Airline, data['airline_id']):
+        return jsonify({'message': 'Invalid airline'}), 400
 
     flight = Flight(
         airline_id=data['airline_id'],
@@ -319,6 +324,10 @@ def update_crew_assignment_controller(flight_id):
     flight_crew_assignments = FlightCrewAssignment.query.filter_by(flight_id=flight_id).all()
     for assignment in flight_crew_assignments:
         db.session.delete(assignment)
+    if not db.session.get(Crew, data['crew_id']):
+        return jsonify({'message': 'Invalid crew'})
+    if not db.session.get(CrewRole, data['role_id']):
+        return jsonify({'message': 'Invalid role'})
 
     for crew_assignment in data['crew_assignments']:
         new_assignment = FlightCrewAssignment(
