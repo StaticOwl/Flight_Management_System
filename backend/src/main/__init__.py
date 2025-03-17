@@ -4,17 +4,22 @@ from flask_migrate import Migrate
 from flask_cors import CORS
 import os
 
-from config.config import config
+from src.main.config.config import config
+import src.main.config.defaults as defaults
+from src.main.config.config import DevelopmentConfig
 
 print("Creating App")
 db = SQLAlchemy()
 migrate = Migrate()
 
 def create_app():
-    config_mode = os.getenv('FLASK_ENV', 'dev')
-    print(f"{os.getenv("DATABASE_URL")}")
+    config_mode = os.getenv('FLASK_ENV', defaults.FLASK_ENV)
+    print(f"{os.getenv("DATABASE_URL", defaults.DATABASE_URL)}")
     app = Flask(__name__)
-    app.config.from_object(config[config_mode])
+
+    config_obj = config.get(config_mode, DevelopmentConfig())
+    if config_obj is not None:
+        app.config.from_object(config_obj)
 
     print(f"Running in {config_mode} mode")
     print(f"Config: {app.config}")
