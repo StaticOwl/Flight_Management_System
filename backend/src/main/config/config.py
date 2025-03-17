@@ -1,5 +1,5 @@
 import os
-import defaults
+import main.config.defaults as defaults
 
 
 class Config:
