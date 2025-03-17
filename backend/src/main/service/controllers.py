@@ -131,7 +131,7 @@ def update_crew_controller(crew_id):
     data = request.get_json()
     
     # Find the crew member by ID
-    crew = Crew.query.get(crew_id)
+    crew = db.session.get(Crew, crew_id)
     if not crew:
         return make_response(jsonify({"message": "Crew member not found"}), 404)
     
@@ -167,7 +167,7 @@ def search_flights_controller():
 
 def get_user_profile_controller(token):
     user_id = get_user_id_from_token(token)['user_id']
-    user = User.query.get(user_id)
+    user = db.session.get(User, user_id)
     if not user:
         return jsonify({'message': 'User not found'}), 404
 
@@ -256,10 +256,10 @@ def get_booking_history_controller(token):
 
 
 def get_airline_dashboard_controller(airline_id):
-    airline = Airline.query.get(airline_id)
+    airline = db.session.get(Airline, airline_id)
     if airline:
         airline_dict = airline.to_dict()
-        airline_dict['flights'] = [flight.to_dict() for flight in airline.flights]
+        airline_dict['flights'] = [flight.to_dict() for flight in airline.flight_ref]
         return jsonify(airline_dict)
     else:
         return jsonify({'message': 'Airline not found'}), 404
@@ -268,7 +268,7 @@ def get_airline_dashboard_controller(airline_id):
 def update_user_profile_controller(token):
     data = request.get_json()
     user_id = get_user_id_from_token(token)['user_id']
-    user = User.query.get(user_id)
+    user = db.session.get(User, user_id)
     if not user:
         return jsonify({'message': 'User not found'}), 404
     
@@ -290,7 +290,7 @@ def update_user_profile_controller(token):
 
 def modify_booking_controller(booking_id):
     data = request.get_json()
-    booking_detail = BookingDetail.query.get(booking_id)
+    booking_detail = db.session.get(BookingDetail, booking_id)
     if not booking_detail:
         return jsonify({'message': 'Booking not found'}), 404
 
@@ -342,7 +342,7 @@ def update_crew_assignment_controller(flight_id):
 
 def cancel_booking_controller(booking_id):
     booking_detail = BookingDetail.query.filter_by(booking_id=booking_id).all()
-    booking = Booking.query.get(booking_id)
+    booking = db.session.get(Booking, booking_id)
     if not (booking_detail or booking):
         return jsonify({'message': 'Booking not found'}), 404
     for detail in booking_detail:
@@ -354,7 +354,7 @@ def cancel_booking_controller(booking_id):
 
 
 def delete_user_account_controller(user_id):
-    user = User.query.get(user_id)
+    user = db.session.get(User, user_id)
     if not user:
         return jsonify({'message': 'User not found'}), 404
 
@@ -389,8 +389,8 @@ def get_crew_assignment_controller(flight_id):
 
     response = []
     for assignment in assignments:
-        crew = Crew.query.get(assignment.crew_id)
-        role = CrewRole.query.get(assignment.role_id)
+        crew = db.session.get(Crew, assignment.crew_id)
+        role = db.session.get(CrewRole, assignment.role_id)
         response.append({
             "crew_id": crew.crew_id,
             "first_name": crew.first_name,

@@ -27,7 +27,7 @@ def test_read_airline(db_session):
 
     TESTS SQLAlchemy setup for READ
     """
-    u = Airline.query.get(1)
+    u = db_session.get(Airline, 1)
     assert u.airline_name == 'AirLine One'
     assert u.contact_email == 'contact@airlineone.com'
 
@@ -39,7 +39,7 @@ def test_read_bookingdetail(db_session):
 
     TESTS SQLAlchemy setup for READ
     """
-    u = BookingDetail.query.get(1)
+    u = db_session.get(BookingDetail, 1)
     assert u.total_cost == 800.00
     assert u.num_passengers == 2
     assert u.flight_id == 2
@@ -52,7 +52,7 @@ def test_read_booking(db_session):
 
     TESTS SQLAlchemy setup for READ
     """
-    u = Booking.query.get(2)
+    u = db_session.get(Booking, 2)
     assert u.user_id == 1
 
 def test_read_crew(db_session):
@@ -63,7 +63,7 @@ def test_read_crew(db_session):
 
     TESTS SQLAlchemy setup for READ
     """
-    u = Crew.query.get(1)
+    u = db_session.get(Crew, 1)
     assert u.first_name == 'Alice'
     assert u.last_name == 'Taylor'
 
@@ -75,7 +75,7 @@ def test_read_crewrole(db_session):
 
     TESTS SQLAlchemy setup for READ
     """
-    u = CrewRole.query.get(1)
+    u = db_session.get(CrewRole, 1)
     assert u.role_name == 'Pilot'
 
 def test_read_flightcrewassignment(db_session):
@@ -86,7 +86,7 @@ def test_read_flightcrewassignment(db_session):
 
     TESTS SQLAlchemy setup for READ
     """
-    u = FlightCrewAssignment.query.get(1)
+    u = db_session.get(FlightCrewAssignment, 1)
     assert u.flight_id == 1
     assert u.crew_id == 1
     assert u.role_id == 1
@@ -99,7 +99,7 @@ def test_read_flight(db_session):
 
     TESTS SQLAlchemy setup for READ
     """
-    u = Flight.query.get(1)
+    u = db_session.get(Flight, 1)
     assert u.airline_id == 1
     assert u.flight_number == 'AL101'
     assert u.departure_airport == 'JFK'
@@ -115,7 +115,7 @@ def test_read_passenger(db_session):
 
     TESTS SQLAlchemy setup for READ
     """
-    u = Passenger.query.get(1)
+    u = db_session.get(Passenger, 1)
     assert u.first_name == 'John'
     assert u.last_name == 'Doe'
     assert u.booking_details_id == 1
@@ -128,7 +128,7 @@ def test_read_payment(db_session):
 
     TESTS SQLAlchemy setup for READ
     """
-    u = Payment.query.get(3)
+    u = db_session.get(Payment, 3)
     assert u.booking_details_id == 1
     assert u.amount == 800.00
     assert u.payment_method == 'Credit Card'
@@ -159,11 +159,11 @@ def test_update_airline(db_session):
 
     TESTS SQLAlchemy setup for Update
     """
-    u = Airline.query.get(1)
+    u = db_session.get(Airline, 1)
     u.airline_name = 'AirLine Two'
     db_session.commit()
 
-    u2 = Airline.query.get(1)
+    u2 = db_session.get(Airline, 1)
     assert u2.airline_name == 'AirLine Two'
 
 def test_update_bookingdetail(db_session):
@@ -174,11 +174,11 @@ def test_update_bookingdetail(db_session):
 
     TESTS SQLAlchemy setup for Update
     """
-    u = BookingDetail.query.get(1)
+    u = db_session.get(BookingDetail, 1)
     u.total_cost = 900.50
     db_session.commit()
 
-    u2 = BookingDetail.query.get(1)
+    u2 = db_session.get(BookingDetail, 1)
     assert u2.total_cost == 900.50
 
 def test_update_booking(db_session):
@@ -189,11 +189,11 @@ def test_update_booking(db_session):
 
     TESTS SQLAlchemy setup for Update
     """
-    u = Booking.query.get(1)
+    u = db_session.get(Booking, 1)
     u.user_id = 2
     db_session.commit()
 
-    u2 = Booking.query.get(1)
+    u2 = db_session.get(Booking, 1)
     assert u2.user_id == 2
 
 def test_update_crew(db_session):
@@ -204,11 +204,11 @@ def test_update_crew(db_session):
 
     TESTS SQLAlchemy setup for Update
     """
-    u = Crew.query.get(1)
+    u = db_session.get(Crew, 1)
     u.first_name = 'Arial'
     db_session.commit()
 
-    u2 = Crew.query.get(1)
+    u2 = db_session.get(Crew, 1)
     assert u2.first_name == 'Arial'
 
 def test_update_crewrole(db_session):
@@ -219,11 +219,11 @@ def test_update_crewrole(db_session):
 
     TESTS SQLAlchemy setup for Update
     """
-    u = CrewRole.query.get(1)
+    u = db_session.get(CrewRole, 1)
     u.role_name = 'Jim'
     db_session.commit()
 
-    u2 = CrewRole.query.get(1)
+    u2 = db_session.get(CrewRole, 1)
     assert u2.role_name == 'Jim'
 
 def test_update_flightcrewassignment(db_session):
@@ -234,11 +234,11 @@ def test_update_flightcrewassignment(db_session):
 
     TESTS SQLAlchemy setup for Update
     """
-    u = FlightCrewAssignment.query.get(1)
+    u = db_session.get(FlightCrewAssignment, 1)
     u.flight_id = 5
     db_session.commit()
 
-    u2 = FlightCrewAssignment.query.get(1)
+    u2 = db_session.get(FlightCrewAssignment, 1)
     assert u2.flight_id == 5
 
 def test_update_flight(db_session):
@@ -249,11 +249,11 @@ def test_update_flight(db_session):
 
     TESTS SQLAlchemy setup for Update
     """
-    u = Flight.query.get(1)
+    u = db_session.get(Flight, 1)
     u.aircraft_type = 'Boeing 787'
     db_session.commit()
 
-    u2 = Flight.query.get(1)
+    u2 = db_session.get(Flight, 1)
     assert u2.aircraft_type == 'Boeing 787'
 
 def test_update_passenger(db_session):
@@ -264,11 +264,11 @@ def test_update_passenger(db_session):
 
     TESTS SQLAlchemy setup for Update
     """
-    u = Passenger.query.get(1)
+    u = db_session.get(Passenger, 1)
     u.first_name = 'Jim'
     db_session.commit()
 
-    u2 = Passenger.query.get(1)
+    u2 = db_session.get(Passenger, 1)
     assert u2.first_name == 'Jim'
 
 def test_update_payment(db_session):
@@ -279,11 +279,11 @@ def test_update_payment(db_session):
 
     TESTS SQLAlchemy setup for Update
     """
-    u = Payment.query.get(1)
+    u = db_session.get(Payment, 1)
     u.amount = 900.50
     db_session.commit()
 
-    u2 = Payment.query.get(1)
+    u2 = db_session.get(Payment, 1)
     assert u2.amount == 900.50
 
 #Delete
@@ -311,7 +311,7 @@ def test_delete_airline(db_session):
     """
     delete_airline_by_id(db_session, 1, True)
 
-    u2 = Airline.query.get(1)
+    u2 = db_session.get(Airline, 1)
     assert not u2
 
 def test_delete_booking_detail(db_session):
@@ -324,7 +324,7 @@ def test_delete_booking_detail(db_session):
     """
     delete_booking_detail_by_id(db_session, 1, True)
 
-    u2 = BookingDetail.query.get(1)
+    u2 = db_session.get(BookingDetail, 1)
     assert not u2
 
 def test_delete_booking(db_session):
@@ -337,7 +337,7 @@ def test_delete_booking(db_session):
     """
     delete_booking_by_id(db_session, 1, True)
 
-    u2 = Booking.query.get(1)
+    u2 = db_session.get(Booking, 1)
     assert not u2
 
 def test_delete_crew(db_session):
@@ -350,7 +350,7 @@ def test_delete_crew(db_session):
     """
     delete_crew_by_id(db_session, 1, True)
 
-    u2 = Crew.query.get(1)
+    u2 = db_session.get(Crew, 1)
     assert not u2
 
 def test_delete_crewrole(db_session):
@@ -363,7 +363,7 @@ def test_delete_crewrole(db_session):
     """
     delete_crewrole_by_id(db_session, 1, True)
 
-    u2 = CrewRole.query.get(1)
+    u2 = db_session.get(CrewRole, 1)
     assert not u2
 
 def test_delete_flightcrewassignment(db_session):
@@ -376,7 +376,7 @@ def test_delete_flightcrewassignment(db_session):
     """
     delete_flightcrewassignment_by_id(db_session, 1)
 
-    u2 = FlightCrewAssignment.query.get(1)
+    u2 = db_session.get(FlightCrewAssignment, 1)
     assert not u2
 
 def test_delete_flight(db_session):
@@ -389,7 +389,7 @@ def test_delete_flight(db_session):
     """
     delete_flight_by_id(db_session, 1)
 
-    u2 = Flight.query.get(1)
+    u2 = db_session.get(Flight, 1)
     assert not u2
 
 def test_delete_passenger(db_session):
@@ -402,7 +402,7 @@ def test_delete_passenger(db_session):
     """
     delete_passenger_by_id(db_session, 1)
 
-    u2 = Passenger.query.get(1)
+    u2 = db_session.get(Passenger, 1)
     assert not u2
 
 def test_delete_payment(db_session):
@@ -415,5 +415,5 @@ def test_delete_payment(db_session):
     """
     delete_paymnet_by_id(db_session, 1)
 
-    u2 = Payment.query.get(1)
+    u2 = db_session.get(Payment, 1)
     assert not u2
