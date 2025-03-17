@@ -4,9 +4,9 @@ from flask_migrate import Migrate
 from flask_cors import CORS
 import os
 
-from src.main.config.config import config
-import src.main.config.defaults as defaults
-from src.main.config.config import DevelopmentConfig
+from main.config.config import config
+import main.config.defaults as defaults
+from main.config.config import DevelopmentConfig
 
 print("Creating App")
 db = SQLAlchemy()
