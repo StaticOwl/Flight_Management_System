@@ -28,7 +28,6 @@ This method uses **Podman** to create isolated containers for PostgreSQL and the
    ```
 
 2. **Create a `.env` file if it's not present already**
-
    Inside `backend/envs/dev.env`, add:
    ```env
    POSTGRES_USER=postgres
@@ -45,11 +44,11 @@ This method uses **Podman** to create isolated containers for PostgreSQL and the
    ```
 
    This will:
-   - Spin up a PostgreSQL container
-   - Apply DDLs from `ddl/init_ddl/`
-   - Build and run the Flask app in a container
-   - Automatically inject environment variables
-   - Expose the app on `http://localhost:5000`
+   >- Spin up a PostgreSQL container
+   >- Apply DDLs from `ddl/init_ddl/`
+   >- Build and run the Flask app in a container
+   >- Automatically inject environment variables
+   >- Expose the app on `http://localhost:5000`
 
 ---
 

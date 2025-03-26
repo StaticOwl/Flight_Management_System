@@ -11,8 +11,8 @@ It includes:
 
 ### 🛠 Backend
 
-* Podman Setup: [podman-backend Documentation](./backend/backend.md#podmandocker-setup)
-* Standalone Installation and Init Setup: [backend README](./backend/backend.md#standalone-setup).
+* Podman Setup: [podman-backend Documentation](./backend/backend.md#-option-1-podman--docker-setup-recommended)
+* Standalone Installation and Init Setup: [backend README](./backend/backend.md#-option-2-standalone-setup-without-containers).
 
 ---
 
