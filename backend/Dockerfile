@@ -2,12 +2,11 @@ FROM condaforge/miniforge3:latest
 
 WORKDIR /app
 
-# Copy environment.yml file and requirements.txt
 COPY environment.yml ./
 
 # Create conda environment and activate it
 RUN conda env create -f environment.yml && \
-    echo "source activate flights" >> ~/.bashrc
+    echo "source activate $(head -1 environment.yml | cut -d' ' -f2)" >> ~/.bashrc
 
 # Ensure the conda environment is activated in non-interactive shells
 SHELL ["/bin/bash", "--login", "-c"]
