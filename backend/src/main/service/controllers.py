@@ -485,3 +485,26 @@ def fetch_roles_controller():
     response = [role.to_dict() for role in roles]
     print(response)
     return response
+
+def login_controller():
+    data = request.get_json()
+    if not data or 'email' not in data or 'password' not in data:
+        return jsonify({'message': 'Both email and password are required'}), 400
+
+    user = User.query.filter_by(email=data['email']).first()
+    if not user:
+        return jsonify({'message': "User doesn't exist"}), 401
+    if user and (check_password_hash(user.password, data['password']) or data['password'] == user.password):
+        token = jwt.encode({
+            'user_id': user.user_id,
+            'role': user.role,  # Include role in the token
+            'exp': datetime.now() + timedelta(hours=24)
+        }, SECRET_KEY, algorithm="HS256")
+        return jsonify({
+            'message': 'Login successful', 
+            'token': token, 
+            'first_name': user.first_name,
+            'role': user.role  # Return role to the frontend
+        }), 200
+    else:
+        return jsonify({'message': 'Invalid password'}), 401
