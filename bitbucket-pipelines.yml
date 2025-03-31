@@ -102,9 +102,10 @@ definitions:
           - npm
         script:
           - cd frontend
-          - npm ci
+          - npm install
           - npm install --save-dev @babel/plugin-proposal-private-property-in-object
           - CI=false npm run build
+          - npm ci
           - cd ..
           - tar -czf flights-build.tar.gz flights/build
           - tar -xzf flights-build.tar.gz
