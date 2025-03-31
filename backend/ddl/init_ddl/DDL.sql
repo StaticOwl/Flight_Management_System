@@ -64,27 +64,27 @@ INSERT INTO bookings (user_id) VALUES
 -- BookingDetails
 INSERT INTO bookingdetails (booking_id, flight_id, booking_date, num_passengers, total_cost) VALUES
   (
-    (SELECT booking_id FROM bookings ORDER BY booking_id OFFSET 0 LIMIT 1),
+    (SELECT booking_id FROM bookings ORDER BY booking_id LIMIT 1 OFFSET 0),
     (SELECT flight_id FROM flights WHERE flight_number = 'SJ202'),
     '2023-05-25', 2, 800.00
   ),
   (
-    (SELECT booking_id FROM bookings ORDER BY booking_id OFFSET 1 LIMIT 1),
+    (SELECT booking_id FROM bookings ORDER BY booking_id LIMIT 1 OFFSET 1),
     (SELECT flight_id FROM flights WHERE flight_number = 'FH303'),
     '2023-05-26', 4, 1200.00
   ),
   (
-    (SELECT booking_id FROM bookings ORDER BY booking_id OFFSET 2 LIMIT 1),
+    (SELECT booking_id FROM bookings ORDER BY booking_id LIMIT 1 OFFSET 2),
     (SELECT flight_id FROM flights WHERE flight_number = 'GT404'),
     '2023-05-27', 1, 1000.00
   ),
   (
-    (SELECT booking_id FROM bookings ORDER BY booking_id OFFSET 3 LIMIT 1),
+    (SELECT booking_id FROM bookings ORDER BY booking_id LIMIT 1 OFFSET 3),
     (SELECT flight_id FROM flights WHERE flight_number = 'JS505'),
     '2023-05-28', 3, 1500.00
   ),
   (
-    (SELECT booking_id FROM bookings ORDER BY booking_id OFFSET 4 LIMIT 1),
+    (SELECT booking_id FROM bookings ORDER BY booking_id LIMIT 1 OFFSET 4),
     (SELECT flight_id FROM flights WHERE flight_number = 'AL101'),
     '2023-05-29', 2, 900.00
   )
@@ -93,51 +93,51 @@ INSERT INTO bookingdetails (booking_id, flight_id, booking_date, num_passengers,
 -- Passengers
 INSERT INTO passengers (booking_details_id, first_name, last_name, date_of_birth) VALUES
   (
-    (SELECT booking_details_id FROM bookingdetails ORDER BY booking_details_id OFFSET 0 LIMIT 1),
+    (SELECT booking_details_id FROM bookingdetails ORDER BY booking_details_id LIMIT 1 OFFSET 0),
     'John', 'Doe', '1990-01-01'
   ),
   (
-    (SELECT booking_details_id FROM bookingdetails ORDER BY booking_details_id OFFSET 0 LIMIT 1),
+    (SELECT booking_details_id FROM bookingdetails ORDER BY booking_details_id LIMIT 1 OFFSET 0),
     'Jane', 'Doe', '1992-03-15'
   ),
   (
-    (SELECT booking_details_id FROM bookingdetails ORDER BY booking_details_id OFFSET 1 LIMIT 1),
+    (SELECT booking_details_id FROM bookingdetails ORDER BY booking_details_id LIMIT 1 OFFSET 1),
     'Michael', 'Johnson', '1985-07-20'
   ),
   (
-    (SELECT booking_details_id FROM bookingdetails ORDER BY booking_details_id OFFSET 1 LIMIT 1),
+    (SELECT booking_details_id FROM bookingdetails ORDER BY booking_details_id LIMIT 1 OFFSET 1),
     'Emily', 'Johnson', '1988-11-05'
   ),
   (
-    (SELECT booking_details_id FROM bookingdetails ORDER BY booking_details_id OFFSET 1 LIMIT 1),
+    (SELECT booking_details_id FROM bookingdetails ORDER BY booking_details_id LIMIT 1 OFFSET 1),
     'David', 'Johnson', '2015-02-28'
   ),
   (
-    (SELECT booking_details_id FROM bookingdetails ORDER BY booking_details_id OFFSET 1 LIMIT 1),
+    (SELECT booking_details_id FROM bookingdetails ORDER BY booking_details_id LIMIT 1 OFFSET 1),
     'Sarah', 'Johnson', '2018-09-12'
   ),
   (
-    (SELECT booking_details_id FROM bookingdetails ORDER BY booking_details_id OFFSET 2 LIMIT 1),
+    (SELECT booking_details_id FROM bookingdetails ORDER BY booking_details_id LIMIT 1 OFFSET 2),
     'Robert', 'Williams', '1978-04-30'
   ),
   (
-    (SELECT booking_details_id FROM bookingdetails ORDER BY booking_details_id OFFSET 3 LIMIT 1),
+    (SELECT booking_details_id FROM bookingdetails ORDER BY booking_details_id LIMIT 1 OFFSET 3),
     'Jessica', 'Brown', '1995-06-10'
   ),
   (
-    (SELECT booking_details_id FROM bookingdetails ORDER BY booking_details_id OFFSET 3 LIMIT 1),
+    (SELECT booking_details_id FROM bookingdetails ORDER BY booking_details_id LIMIT 1 OFFSET 3),
     'Christopher', 'Brown', '1997-12-25'
   ),
   (
-    (SELECT booking_details_id FROM bookingdetails ORDER BY booking_details_id OFFSET 3 LIMIT 1),
+    (SELECT booking_details_id FROM bookingdetails ORDER BY booking_details_id LIMIT 1 OFFSET 3),
     'Ashley', 'Brown', '2000-08-18'
   ),
   (
-    (SELECT booking_details_id FROM bookingdetails ORDER BY booking_details_id OFFSET 4 LIMIT 1),
+    (SELECT booking_details_id FROM bookingdetails ORDER BY booking_details_id LIMIT 1 OFFSET 4),
     'Matthew', 'Davis', '1982-03-03'
   ),
   (
-    (SELECT booking_details_id FROM bookingdetails ORDER BY booking_details_id OFFSET 4 LIMIT 1),
+    (SELECT booking_details_id FROM bookingdetails ORDER BY booking_details_id LIMIT 1 OFFSET 4),
     'Olivia', 'Davis', '1984-09-22'
   )
 ;
@@ -145,51 +145,49 @@ INSERT INTO passengers (booking_details_id, first_name, last_name, date_of_birth
 -- Payments
 INSERT INTO payments (booking_details_id, payment_date, amount, payment_method) VALUES
   (
-    (SELECT booking_details_id FROM bookingdetails ORDER BY booking_details_id OFFSET 0 LIMIT 1),
+    (SELECT booking_details_id FROM bookingdetails ORDER BY booking_details_id LIMIT 1 OFFSET 0),
     '2023-05-25', 800.00, 'Credit Card'
   ),
   (
-    (SELECT booking_details_id FROM bookingdetails ORDER BY booking_details_id OFFSET 1 LIMIT 1),
+    (SELECT booking_details_id FROM bookingdetails ORDER BY booking_details_id LIMIT 1 OFFSET 1),
     '2023-05-26', 1200.00, 'Debit Card'
   ),
   (
-    (SELECT booking_details_id FROM bookingdetails ORDER BY booking_details_id OFFSET 2 LIMIT 1),
+    (SELECT booking_details_id FROM bookingdetails ORDER BY booking_details_id LIMIT 1 OFFSET 2),
     '2023-05-27', 1000.00, 'PayPal'
   ),
   (
-    (SELECT booking_details_id FROM bookingdetails ORDER BY booking_details_id OFFSET 3 LIMIT 1),
+    (SELECT booking_details_id FROM bookingdetails ORDER BY booking_details_id LIMIT 1 OFFSET 3),
     '2023-05-28', 1500.00, 'Credit Card'
   ),
   (
-    (SELECT booking_details_id FROM bookingdetails ORDER BY booking_details_id OFFSET 4 LIMIT 1),
+    (SELECT booking_details_id FROM bookingdetails ORDER BY booking_details_id LIMIT 1 OFFSET 4),
     '2023-05-29', 900.00, 'Bank Transfer'
-  )
-;
+  );
 
 -- FlightCrewAssignments
 INSERT INTO flightcrewassignments (flight_id, crew_id, role_id) VALUES
-  ((SELECT flight_id FROM flights ORDER BY flight_id OFFSET 0 LIMIT 1), (SELECT crew_id FROM crews ORDER BY crew_id OFFSET 0 LIMIT 1), (SELECT role_id FROM crewroles ORDER BY role_id OFFSET 0 LIMIT 1)),
-  ((SELECT flight_id FROM flights ORDER BY flight_id OFFSET 0 LIMIT 1), (SELECT crew_id FROM crews ORDER BY crew_id OFFSET 1 LIMIT 1), (SELECT role_id FROM crewroles ORDER BY role_id OFFSET 1 LIMIT 1)),
-  ((SELECT flight_id FROM flights ORDER BY flight_id OFFSET 0 LIMIT 1), (SELECT crew_id FROM crews ORDER BY crew_id OFFSET 2 LIMIT 1), (SELECT role_id FROM crewroles ORDER BY role_id OFFSET 2 LIMIT 1)),
-  ((SELECT flight_id FROM flights ORDER BY flight_id OFFSET 0 LIMIT 1), (SELECT crew_id FROM crews ORDER BY crew_id OFFSET 3 LIMIT 1), (SELECT role_id FROM crewroles ORDER BY role_id OFFSET 2 LIMIT 1)),
+  ((SELECT flight_id FROM flights ORDER BY flight_id LIMIT 1 OFFSET 0), (SELECT crew_id FROM crews ORDER BY crew_id LIMIT 1 OFFSET 0), (SELECT role_id FROM crewroles ORDER BY role_id LIMIT 1 OFFSET 0)),
+  ((SELECT flight_id FROM flights ORDER BY flight_id LIMIT 1 OFFSET 0), (SELECT crew_id FROM crews ORDER BY crew_id LIMIT 1 OFFSET 1), (SELECT role_id FROM crewroles ORDER BY role_id LIMIT 1 OFFSET 1)),
+  ((SELECT flight_id FROM flights ORDER BY flight_id LIMIT 1 OFFSET 0), (SELECT crew_id FROM crews ORDER BY crew_id LIMIT 1 OFFSET 2), (SELECT role_id FROM crewroles ORDER BY role_id LIMIT 1 OFFSET 2)),
+  ((SELECT flight_id FROM flights ORDER BY flight_id LIMIT 1 OFFSET 0), (SELECT crew_id FROM crews ORDER BY crew_id LIMIT 1 OFFSET 3), (SELECT role_id FROM crewroles ORDER BY role_id LIMIT 1 OFFSET 2)),
 
-  ((SELECT flight_id FROM flights ORDER BY flight_id OFFSET 1 LIMIT 1), (SELECT crew_id FROM crews ORDER BY crew_id OFFSET 1 LIMIT 1), (SELECT role_id FROM crewroles ORDER BY role_id OFFSET 0 LIMIT 1)),
-  ((SELECT flight_id FROM flights ORDER BY flight_id OFFSET 1 LIMIT 1), (SELECT crew_id FROM crews ORDER BY crew_id OFFSET 2 LIMIT 1), (SELECT role_id FROM crewroles ORDER BY role_id OFFSET 1 LIMIT 1)),
-  ((SELECT flight_id FROM flights ORDER BY flight_id OFFSET 1 LIMIT 1), (SELECT crew_id FROM crews ORDER BY crew_id OFFSET 3 LIMIT 1), (SELECT role_id FROM crewroles ORDER BY role_id OFFSET 2 LIMIT 1)),
-  ((SELECT flight_id FROM flights ORDER BY flight_id OFFSET 1 LIMIT 1), (SELECT crew_id FROM crews ORDER BY crew_id OFFSET 4 LIMIT 1), (SELECT role_id FROM crewroles ORDER BY role_id OFFSET 2 LIMIT 1)),
+  ((SELECT flight_id FROM flights ORDER BY flight_id LIMIT 1 OFFSET 1), (SELECT crew_id FROM crews ORDER BY crew_id LIMIT 1 OFFSET 1), (SELECT role_id FROM crewroles ORDER BY role_id LIMIT 1 OFFSET 0)),
+  ((SELECT flight_id FROM flights ORDER BY flight_id LIMIT 1 OFFSET 1), (SELECT crew_id FROM crews ORDER BY crew_id LIMIT 1 OFFSET 2), (SELECT role_id FROM crewroles ORDER BY role_id LIMIT 1 OFFSET 1)),
+  ((SELECT flight_id FROM flights ORDER BY flight_id LIMIT 1 OFFSET 1), (SELECT crew_id FROM crews ORDER BY crew_id LIMIT 1 OFFSET 3), (SELECT role_id FROM crewroles ORDER BY role_id LIMIT 1 OFFSET 2)),
+  ((SELECT flight_id FROM flights ORDER BY flight_id LIMIT 1 OFFSET 1), (SELECT crew_id FROM crews ORDER BY crew_id LIMIT 1 OFFSET 4), (SELECT role_id FROM crewroles ORDER BY role_id LIMIT 1 OFFSET 2)),
 
-  ((SELECT flight_id FROM flights ORDER BY flight_id OFFSET 2 LIMIT 1), (SELECT crew_id FROM crews ORDER BY crew_id OFFSET 2 LIMIT 1), (SELECT role_id FROM crewroles ORDER BY role_id OFFSET 0 LIMIT 1)),
-  ((SELECT flight_id FROM flights ORDER BY flight_id OFFSET 2 LIMIT 1), (SELECT crew_id FROM crews ORDER BY crew_id OFFSET 3 LIMIT 1), (SELECT role_id FROM crewroles ORDER BY role_id OFFSET 1 LIMIT 1)),
-  ((SELECT flight_id FROM flights ORDER BY flight_id OFFSET 2 LIMIT 1), (SELECT crew_id FROM crews ORDER BY crew_id OFFSET 0 LIMIT 1), (SELECT role_id FROM crewroles ORDER BY role_id OFFSET 2 LIMIT 1)),
-  ((SELECT flight_id FROM flights ORDER BY flight_id OFFSET 2 LIMIT 1), (SELECT crew_id FROM crews ORDER BY crew_id OFFSET 4 LIMIT 1), (SELECT role_id FROM crewroles ORDER BY role_id OFFSET 3 LIMIT 1)),
+  ((SELECT flight_id FROM flights ORDER BY flight_id LIMIT 1 OFFSET 2), (SELECT crew_id FROM crews ORDER BY crew_id LIMIT 1 OFFSET 2), (SELECT role_id FROM crewroles ORDER BY role_id LIMIT 1 OFFSET 0)),
+  ((SELECT flight_id FROM flights ORDER BY flight_id LIMIT 1 OFFSET 2), (SELECT crew_id FROM crews ORDER BY crew_id LIMIT 1 OFFSET 3), (SELECT role_id FROM crewroles ORDER BY role_id LIMIT 1 OFFSET 1)),
+  ((SELECT flight_id FROM flights ORDER BY flight_id LIMIT 1 OFFSET 2), (SELECT crew_id FROM crews ORDER BY crew_id LIMIT 1 OFFSET 0), (SELECT role_id FROM crewroles ORDER BY role_id LIMIT 1 OFFSET 2)),
+  ((SELECT flight_id FROM flights ORDER BY flight_id LIMIT 1 OFFSET 2), (SELECT crew_id FROM crews ORDER BY crew_id LIMIT 1 OFFSET 4), (SELECT role_id FROM crewroles ORDER BY role_id LIMIT 1 OFFSET 3)),
 
-  ((SELECT flight_id FROM flights ORDER BY flight_id OFFSET 3 LIMIT 1), (SELECT crew_id FROM crews ORDER BY crew_id OFFSET 3 LIMIT 1), (SELECT role_id FROM crewroles ORDER BY role_id OFFSET 0 LIMIT 1)),
-  ((SELECT flight_id FROM flights ORDER BY flight_id OFFSET 3 LIMIT 1), (SELECT crew_id FROM crews ORDER BY crew_id OFFSET 4 LIMIT 1), (SELECT role_id FROM crewroles ORDER BY role_id OFFSET 1 LIMIT 1)),
-  ((SELECT flight_id FROM flights ORDER BY flight_id OFFSET 3 LIMIT 1), (SELECT crew_id FROM crews ORDER BY crew_id OFFSET 0 LIMIT 1), (SELECT role_id FROM crewroles ORDER BY role_id OFFSET 2 LIMIT 1)),
-  ((SELECT flight_id FROM flights ORDER BY flight_id OFFSET 3 LIMIT 1), (SELECT crew_id FROM crews ORDER BY crew_id OFFSET 1 LIMIT 1), (SELECT role_id FROM crewroles ORDER BY role_id OFFSET 2 LIMIT 1)),
+  ((SELECT flight_id FROM flights ORDER BY flight_id LIMIT 1 OFFSET 3), (SELECT crew_id FROM crews ORDER BY crew_id LIMIT 1 OFFSET 3), (SELECT role_id FROM crewroles ORDER BY role_id LIMIT 1 OFFSET 0)),
+  ((SELECT flight_id FROM flights ORDER BY flight_id LIMIT 1 OFFSET 3), (SELECT crew_id FROM crews ORDER BY crew_id LIMIT 1 OFFSET 4), (SELECT role_id FROM crewroles ORDER BY role_id LIMIT 1 OFFSET 1)),
+  ((SELECT flight_id FROM flights ORDER BY flight_id LIMIT 1 OFFSET 3), (SELECT crew_id FROM crews ORDER BY crew_id LIMIT 1 OFFSET 0), (SELECT role_id FROM crewroles ORDER BY role_id LIMIT 1 OFFSET 2)),
+  ((SELECT flight_id FROM flights ORDER BY flight_id LIMIT 1 OFFSET 3), (SELECT crew_id FROM crews ORDER BY crew_id LIMIT 1 OFFSET 1), (SELECT role_id FROM crewroles ORDER BY role_id LIMIT 1 OFFSET 2)),
 
-  ((SELECT flight_id FROM flights ORDER BY flight_id OFFSET 4 LIMIT 1), (SELECT crew_id FROM crews ORDER BY crew_id OFFSET 4 LIMIT 1), (SELECT role_id FROM crewroles ORDER BY role_id OFFSET 0 LIMIT 1)),
-  ((SELECT flight_id FROM flights ORDER BY flight_id OFFSET 4 LIMIT 1), (SELECT crew_id FROM crews ORDER BY crew_id OFFSET 0 LIMIT 1), (SELECT role_id FROM crewroles ORDER BY role_id OFFSET 1 LIMIT 1)),
-  ((SELECT flight_id FROM flights ORDER BY flight_id OFFSET 4 LIMIT 1), (SELECT crew_id FROM crews ORDER BY crew_id OFFSET 1 LIMIT 1), (SELECT role_id FROM crewroles ORDER BY role_id OFFSET 2 LIMIT 1)),
-  ((SELECT flight_id FROM flights ORDER BY flight_id OFFSET 4 LIMIT 1), (SELECT crew_id FROM crews ORDER BY crew_id OFFSET 2 LIMIT 1), (SELECT role_id FROM crewroles ORDER BY role_id OFFSET 2 LIMIT 1))
-;
+  ((SELECT flight_id FROM flights ORDER BY flight_id LIMIT 1 OFFSET 4), (SELECT crew_id FROM crews ORDER BY crew_id LIMIT 1 OFFSET 4), (SELECT role_id FROM crewroles ORDER BY role_id LIMIT 1 OFFSET 0)),
+  ((SELECT flight_id FROM flights ORDER BY flight_id LIMIT 1 OFFSET 4), (SELECT crew_id FROM crews ORDER BY crew_id LIMIT 1 OFFSET 0), (SELECT role_id FROM crewroles ORDER BY role_id LIMIT 1 OFFSET 1)),
+  ((SELECT flight_id FROM flights ORDER BY flight_id LIMIT 1 OFFSET 4), (SELECT crew_id FROM crews ORDER BY crew_id LIMIT 1 OFFSET 1), (SELECT role_id FROM crewroles ORDER BY role_id LIMIT 1 OFFSET 2)),
+  ((SELECT flight_id FROM flights ORDER BY flight_id LIMIT 1 OFFSET 4), (SELECT crew_id FROM crews ORDER BY crew_id LIMIT 1 OFFSET 2), (SELECT role_id FROM crewroles ORDER BY role_id LIMIT 1 OFFSET 2));

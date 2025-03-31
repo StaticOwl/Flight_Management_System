@@ -53,7 +53,7 @@ def test_read_booking(db_session):
     TESTS SQLAlchemy setup for READ
     """
     u = db_session.get(Booking, 2)
-    assert u.user_id == 1
+    assert u.user_id == 2
 
 def test_read_crew(db_session):
     """
@@ -129,9 +129,9 @@ def test_read_payment(db_session):
     TESTS SQLAlchemy setup for READ
     """
     u = db_session.get(Payment, 3)
-    assert u.booking_details_id == 1
-    assert u.amount == 800.00
-    assert u.payment_method == 'Credit Card'
+    assert u.booking_details_id == 3
+    assert u.amount == 1000.00
+    assert u.payment_method == 'PayPal'
 
 
 
