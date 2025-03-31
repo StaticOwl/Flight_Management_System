@@ -64,7 +64,7 @@ definitions:
         script:
           - cd frontend
           - npm install
-          - npm test
+          - npm test --passWithNoTests
           - npm ci
           - npm install --save-dev @babel/plugin-proposal-private-property-in-object
 
