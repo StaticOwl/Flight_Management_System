@@ -6,8 +6,7 @@ INSERT INTO users (first_name, last_name, email, password, phone, address) VALUE
 ('Michael', 'Johnson', 'michael.johnson@email.com', 'securepass', '5551234567', '789 Elm Rd, Village, Country'),
 ('Emily', 'Williams', 'emily.williams@email.com', 'pass123456', '1112223333', '321 Pine St, City, Country'),
 ('David', 'Brown', 'david.brown@email.com', 'password123!', '4445556666', '654 Maple Ln, Town, Country')
-RETURNING user_id;
-
+;
 -- Airlines
 INSERT INTO airlines (airline_name, contact_email, contact_phone) VALUES
 ('AirLine One', 'contact@airlineone.com', '1800123456'),
@@ -15,8 +14,7 @@ INSERT INTO airlines (airline_name, contact_email, contact_phone) VALUES
 ('FlyHigh Airways', 'support@flyhigh.com', '1800456789'),
 ('Global Travels', 'enquiry@globaltravels.com', '1800555666'),
 ('JetStream Airlines', 'customercare@jetstream.com', '1800777888')
-RETURNING airline_id;
-
+;
 
 -- Flights
 INSERT INTO flights (
@@ -35,8 +33,7 @@ INSERT INTO flights (
 ((SELECT airline_id FROM airlines WHERE airline_name = 'FlyHigh Airways'), 'FH303', 'LHR', 'DXB', '2023-06-03 14:30:00', '2023-06-03 22:00:00', 'Boeing 777', 300, 37.50),
 ((SELECT airline_id FROM airlines WHERE airline_name = 'Global Travels'), 'GT404', 'SYD', 'NRT', '2023-06-04 06:00:00', '2023-06-04 12:30:00', 'Airbus A350', 280, 15.75),
 ((SELECT airline_id FROM airlines WHERE airline_name = 'JetStream Airlines'), 'JS505', 'DEL', 'SIN', '2023-06-05 09:15:00', '2023-06-05 15:45:00', 'Boeing 787', 250, 65.00)
-RETURNING flight_id;
-
+;
 
 -- Crew
 INSERT INTO crews (first_name, last_name) VALUES
@@ -45,8 +42,7 @@ INSERT INTO crews (first_name, last_name) VALUES
   ('Charlie', 'Wilson'),
   ('David', 'Thompson'),
   ('Eve', 'Martinez')
-RETURNING crew_id, first_name, last_name;
-
+;
 
 -- CrewRoles
 INSERT INTO crewroles (role_name) VALUES
@@ -54,8 +50,7 @@ INSERT INTO crewroles (role_name) VALUES
   ('Co-Pilot'),
   ('Flight Attendant'),
   ('Purser')
-RETURNING role_id, role_name;
-
+;
 -- Bookings
 INSERT INTO bookings (user_id) VALUES
   ((SELECT user_id FROM users WHERE email = 'john.doe@email.com')),
@@ -63,8 +58,7 @@ INSERT INTO bookings (user_id) VALUES
   ((SELECT user_id FROM users WHERE email = 'michael.johnson@email.com')),
   ((SELECT user_id FROM users WHERE email = 'emily.williams@email.com')),
   ((SELECT user_id FROM users WHERE email = 'david.brown@email.com'))
-RETURNING booking_id, user_id;
-
+;
 
 
 -- BookingDetails
@@ -94,8 +88,7 @@ INSERT INTO bookingdetails (booking_id, flight_id, booking_date, num_passengers,
     (SELECT flight_id FROM flights WHERE flight_number = 'AL101'),
     '2023-05-29', 2, 900.00
   )
-RETURNING booking_details_id, booking_id, flight_id;
-
+;
 
 -- Passengers
 INSERT INTO passengers (booking_details_id, first_name, last_name, date_of_birth) VALUES
@@ -147,8 +140,7 @@ INSERT INTO passengers (booking_details_id, first_name, last_name, date_of_birth
     (SELECT booking_details_id FROM bookingdetails ORDER BY booking_details_id OFFSET 4 LIMIT 1),
     'Olivia', 'Davis', '1984-09-22'
   )
-RETURNING passenger_id, booking_details_id;
-
+;
 
 -- Payments
 INSERT INTO payments (booking_details_id, payment_date, amount, payment_method) VALUES
@@ -172,8 +164,7 @@ INSERT INTO payments (booking_details_id, payment_date, amount, payment_method) 
     (SELECT booking_details_id FROM bookingdetails ORDER BY booking_details_id OFFSET 4 LIMIT 1),
     '2023-05-29', 900.00, 'Bank Transfer'
   )
-RETURNING payment_id, booking_details_id;
-
+;
 
 -- FlightCrewAssignments
 INSERT INTO flightcrewassignments (flight_id, crew_id, role_id) VALUES
@@ -201,4 +192,4 @@ INSERT INTO flightcrewassignments (flight_id, crew_id, role_id) VALUES
   ((SELECT flight_id FROM flights ORDER BY flight_id OFFSET 4 LIMIT 1), (SELECT crew_id FROM crews ORDER BY crew_id OFFSET 0 LIMIT 1), (SELECT role_id FROM crewroles ORDER BY role_id OFFSET 1 LIMIT 1)),
   ((SELECT flight_id FROM flights ORDER BY flight_id OFFSET 4 LIMIT 1), (SELECT crew_id FROM crews ORDER BY crew_id OFFSET 1 LIMIT 1), (SELECT role_id FROM crewroles ORDER BY role_id OFFSET 2 LIMIT 1)),
   ((SELECT flight_id FROM flights ORDER BY flight_id OFFSET 4 LIMIT 1), (SELECT crew_id FROM crews ORDER BY crew_id OFFSET 2 LIMIT 1), (SELECT role_id FROM crewroles ORDER BY role_id OFFSET 2 LIMIT 1))
-RETURNING id, flight_id, crew_id, role_id;
+;
