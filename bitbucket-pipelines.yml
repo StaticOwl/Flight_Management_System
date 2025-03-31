@@ -63,6 +63,8 @@ definitions:
           - npm
         script:
           - cd frontend
+          - npm install
+          - npm test
           - npm ci
           - npm install --save-dev @babel/plugin-proposal-private-property-in-object
 
