@@ -62,7 +62,7 @@ definitions:
         caches:
           - npm
         script:
-          - cd frontend/flights
+          - cd frontend
           - npm ci
           - npm install --save-dev @babel/plugin-proposal-private-property-in-object
 
