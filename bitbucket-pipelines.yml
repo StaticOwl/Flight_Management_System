@@ -33,7 +33,7 @@ definitions:
 
     - step: &backend-build-deploy
         name: Backend - Build & Deploy
-        deployment: production
+        deployment: be-production
         caches:
           - pip
         script:
@@ -97,7 +97,7 @@ definitions:
 
     - step: &frontend-build-deploy
         name: Frontend - Build & Deploy
-        deployment: production
+        deployment: fe-production
         caches:
           - npm
         script:
