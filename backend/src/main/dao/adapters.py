@@ -144,3 +144,159 @@ def delete_paymnet_by_id(db_session, payment_id, cascade = False):
     except Exception as e:
         print(e)
         raise
+
+def create_user(db_session, first_name, last_name, email, hashed_password, phone, address, booking_ref):
+    try:
+        user = User(
+            first_name=first_name,
+            last_name=last_name,
+            email=email,
+            password=hashed_password,
+            phone=phone,
+            address=address,
+            booking_ref=booking_ref
+        )
+        db_session.add(user)
+        db_session.commit()
+        return user
+    except Exception as e:
+        print(e)
+        raise
+
+def create_airline(db_session, airline_name, contact_email, contact_phone, flight_ref):
+    try:
+        airline = Airline(
+            airline_name = airline_name,
+            contact_email = contact_email,
+            contact_phone = contact_phone,
+            flight_ref = flight_ref
+        )
+        db_session.add(airline)
+        db_session.commit()
+        return airline
+    except Exception as e:
+        print(e)
+        raise
+
+def create_flight(db_session, airline_id, flight_number, departure_airport, arrival_airport,
+                  departure_time, arrival_time, aircraft_type, num_seats, price_per_seat):
+    try:
+        flight = Flight(
+            airline_id=airline_id,
+            flight_number=flight_number,
+            departure_airport=departure_airport,
+            arrival_airport=arrival_airport,
+            departure_time=departure_time,
+            arrival_time=arrival_time,
+            aircraft_type=aircraft_type,
+            num_seats=num_seats,
+            price_per_seat=price_per_seat
+        )
+        db_session.add(flight)
+        db_session.commit()
+        return flight
+    except Exception as e:
+        print(e)
+        raise
+
+def create_crew(db_session, first_name, last_name, flight_crew_assignment_ref):
+    try:
+        crew = Crew(
+            first_name=first_name,
+            last_name=last_name,
+            flight_crew_assignment_ref=flight_crew_assignment_ref
+        )
+        db_session.add(crew)
+        db_session.commit()
+        return crew
+    except Exception as e:
+        print(e)
+        raise
+
+def create_crew_role(db_session, role_name, flight_crew_assignment_ref):
+    try:
+        crew_role = CrewRole(
+            role_name=role_name,
+            flight_crew_assignment_ref=flight_crew_assignment_ref
+        )
+        db_session.add(crew_role)
+        db_session.commit()
+        return crew_role
+    except Exception as e:
+        print(e)
+        raise
+
+def create_booking(db_session, user_id, booking_date, num_passengers, total_cost):
+    try:
+        booking = Booking(
+            user_id=user_id,
+            booking_date=booking_date,
+            num_passengers=num_passengers,
+            total_cost=total_cost
+        )
+        db_session.add(booking)
+        db_session.commit()
+        return booking
+    except Exception as e:
+        print(e)
+        raise
+
+def create_booking_detail(db_session, booking_id, flight_id, booking_date, num_passengers, total_cost):
+    try:
+        booking_detail = BookingDetail(
+            booking_id=booking_id,
+            flight_id=flight_id,
+            booking_date=booking_date,
+            num_passengers=num_passengers,
+            total_cost=total_cost
+        )
+        db_session.add(booking_detail)
+        db_session.commit()
+        return booking_detail
+    except Exception as e:
+        print(e)
+        raise
+
+def create_passenger(db_session, booking_details_id, first_name, last_name, date_of_birth):
+    try:
+        passenger = Passenger(
+            booking_details_id=booking_details_id,
+            first_name=first_name,
+            last_name=last_name,
+            date_of_birth=date_of_birth
+        )
+        db_session.add(passenger)
+        db_session.commit()
+        return passenger
+    except Exception as e:
+        print(e)
+        raise
+
+def create_payment(db_session, booking_details_id, payment_date, amount, payment_method):
+    try:
+        payment = Payment(
+            booking_details_id=booking_details_id,
+            payment_date=payment_date,
+            amount=amount,
+            payment_method=payment_method
+        )
+        db_session.add(payment)
+        db_session.commit()
+        return payment
+    except Exception as e:
+        print(e)
+        raise
+
+def create_flight_crew_assignment(db_session, flight_id, crew_id, role_id):
+    try:
+        flight_crew_assignment = FlightCrewAssignment(
+            flight_id=flight_id,
+            crew_id=crew_id,
+            role_id=role_id
+        )
+        db_session.add(flight_crew_assignment)
+        db_session.commit()
+        return flight_crew_assignment
+    except Exception as e:
+        print(e)
+        raise
