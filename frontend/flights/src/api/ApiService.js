@@ -132,6 +132,134 @@ const getRoles = async() => {
     return await response.json();
 }
 
+// -------------------- New Role Management Functions --------------------
+
+/**
+ * Get all users (admin only)
+ */
+const getAllUsers = async () => {
+    try {
+        const token = localStorage.getItem('token');
+        const response = await axios.get(`${API_BASE_URL}/admin/users`, {
+            headers: { Authorization: `Bearer ${token}` }
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching all users:', error);
+        throw error;
+    }
+};
+
+/**
+ * Update a user's role (admin only)
+ */
+const updateUserRole = async (userId, role) => {
+    try {
+        const token = localStorage.getItem('token');
+        const response = await axios.put(
+            `${API_BASE_URL}/admin/users/${userId}/role`, 
+            { role },
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`
+                }
+            }
+        );
+        return response.data;
+    } catch (error) {
+        console.error('Error updating user role:', error);
+        throw error;
+    }
+};
+
+/**
+ * Get current user's role from localStorage
+ */
+const getCurrentUserRole = () => {
+    return localStorage.getItem('role') || 'customer';
+};
+
+/**
+ * Check if current user has the specified role
+ */
+const hasRole = (role) => {
+    const currentRole = getCurrentUserRole();
+    if (Array.isArray(role)) {
+        return role.includes(currentRole);
+    }
+    return currentRole === role;
+};
+
+/**
+ * Update a flight (crew or admin only)
+ */
+const updateFlight = async (flightData) => {
+    try {
+        const token = localStorage.getItem('token');
+        const response = await axios.put(
+            `${API_BASE_URL}/flights/${flightData.flight_id}`,
+            flightData,
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`
+                }
+            }
+        );
+        return response.data;
+    } catch (error) {
+        console.error('Error updating flight:', error);
+        throw error;
+    }
+};
+
+/**
+ * Add a new flight (crew or admin only)
+ */
+const addFlight = async (flightData) => {
+    try {
+        const token = localStorage.getItem('token');
+        const response = await axios.post(
+            `${API_BASE_URL}/createflights`,
+            flightData,
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`
+                }
+            }
+        );
+        return response.data;
+    } catch (error) {
+        console.error('Error adding flight:', error);
+        throw error;
+    }
+};
+
+/**
+ * Update an existing crew member (crew or admin only)
+ */
+const updateCrew = async (crewData) => {
+    try {
+        const token = localStorage.getItem('token');
+        const response = await axios.put(
+            `${API_BASE_URL}/update-crew/${crewData.crew_id}`,
+            crewData,
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`
+                }
+            }
+        );
+        return response.data;
+    } catch (error) {
+        console.error('Error updating crew member:', error);
+        throw error;
+    }
+};
+
 export default {
     createUser,
     getUser,
@@ -147,5 +275,12 @@ export default {
     getCrews,
     getFlights,
     getRoles,
-    addCrew
+    addCrew,
+    getAllUsers,
+    updateUserRole,
+    getCurrentUserRole,
+    hasRole,
+    updateFlight,
+    addFlight,
+    updateCrew
 };

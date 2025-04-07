@@ -2,10 +2,10 @@ from flask import request, jsonify, make_response, request, current_app
 from datetime import datetime, timedelta
 from werkzeug.security import generate_password_hash, check_password_hash
 import uuid
-from main.__init__ import db
+from __init__ import db
 import jwt
 from sqlalchemy.exc import SQLAlchemyError
-from main.dao.models import Airline, Flight, Crew, CrewRole, FlightCrewAssignment, Booking, BookingDetail, Passenger, Payment, User
+from dao.models import Airline, Flight, Crew, CrewRole, FlightCrewAssignment, Booking, BookingDetail, Passenger, Payment, User
 
 # ----------------------------------------------- #
 # Query Object Methods => https://docs.sqlalchemy.org/en/14/orm/query.html#sqlalchemy.orm.Query
@@ -508,3 +508,97 @@ def login_controller():
         }), 200
     else:
         return jsonify({'message': 'Invalid password'}), 401
+    
+# Add these functions to your controllers.py file
+
+def get_all_users_controller():
+    """
+    Admin endpoint to fetch all users
+    """
+    try:
+        # Get all users
+        users = User.query.all()
+        user_list = []
+        
+        for user in users:
+            user_dict = user.to_dict()
+            # Don't send password hash in response
+            if 'password' in user_dict:
+                del user_dict['password']
+            user_list.append(user_dict)
+            
+        return jsonify(user_list)
+    except Exception as e:
+        return jsonify({'message': f'Error fetching users: {str(e)}'}), 500
+
+def update_user_role_controller(user_id):
+    """
+    Admin endpoint to update a user's role
+    """
+    data = request.get_json()
+    
+    if not data or 'role' not in data:
+        return jsonify({'message': 'Role is required'}), 400
+        
+    # Validate the role
+    valid_roles = ['customer', 'crew', 'admin']
+    if data['role'] not in valid_roles:
+        return jsonify({'message': f'Invalid role. Must be one of: {", ".join(valid_roles)}'}), 400
+    
+    try:
+        # Get the user
+        user = User.query.get(user_id)
+        if not user:
+            return jsonify({'message': 'User not found'}), 404
+            
+        # Update the role
+        user.role = data['role']
+        db.session.commit()
+        
+        return jsonify({'success': True, 'message': f'User role updated to {data["role"]}'}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'message': f'Error updating user role: {str(e)}'}), 500
+
+# Add a function to get user-specific data for admin views
+def get_user_data_for_admin_controller(user_id):
+    """
+    Admin endpoint to fetch detailed data for a specific user
+    """
+    try:
+        user = User.query.get(user_id)
+        if not user:
+            return jsonify({'message': 'User not found'}), 404
+            
+        # Get user bookings
+        bookings = Booking.query.filter_by(user_id=user_id).all()
+        booking_data = []
+        
+        for booking in bookings:
+            booking_details = BookingDetail.query.filter_by(booking_id=booking.booking_id).first()
+            if booking_details:
+                flight = Flight.query.get(booking_details.flight_id)
+                airline = Airline.query.get(flight.airline_id) if flight else None
+                
+                booking_data.append({
+                    'booking_id': booking.booking_id,
+                    'booking_date': booking_details.booking_date.isoformat() if booking_details.booking_date else None,
+                    'num_passengers': booking_details.num_passengers,
+                    'total_cost': str(booking_details.total_cost),
+                    'flight_number': flight.flight_number if flight else None,
+                    'airline_name': airline.airline_name if airline else None,
+                    'departure_airport': flight.departure_airport if flight else None,
+                    'arrival_airport': flight.arrival_airport if flight else None
+                })
+        
+        # Create user data object
+        user_data = user.to_dict()
+        # Don't send password hash
+        if 'password' in user_data:
+            del user_data['password']
+            
+        user_data['bookings'] = booking_data
+        
+        return jsonify(user_data)
+    except Exception as e:
+        return jsonify({'message': f'Error fetching user data: {str(e)}'}), 500
