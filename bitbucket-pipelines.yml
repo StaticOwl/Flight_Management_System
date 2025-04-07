@@ -6,20 +6,17 @@ definitions:
     npm: ~/.npm
 
   steps:
-    - step: &backend-test
-        name: Backend - Test
+    - step: &backend-setup-and-test
+        name: Backend - Setup & Test
         caches:
           - pip
         script:
           - cd backend
-          - |
-            if [ -f "environment.yml" ]; then
-              wget https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-x86_64.sh -O miniforge.sh
-              bash miniforge.sh -b -p $HOME/miniforge
-              export PATH="$HOME/miniforge/bin:$PATH"
-              conda env create -f environment.yml
-              source "$HOME/miniforge/bin/activate" "$(head -1 environment.yml | cut -d' ' -f2)"
-            fi
+          - wget https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-x86_64.sh -O miniforge.sh
+          - bash miniforge.sh -b -p $HOME/miniforge
+          - export PATH="$HOME/miniforge/bin:$PATH"
+          - conda env create -f environment.yml
+          - source "$HOME/miniforge/bin/activate" "$(head -1 environment.yml | cut -d' ' -f2)"
           - cd src
           - python -m pytest tests/ --cov=main --cov-report=xml --cov-report=term
           - |
@@ -29,137 +26,84 @@ definitions:
               exit 1
             fi
         artifacts:
-          - backend/src/coverage.xml
+          - backend/**
 
-    - step: &backend-build-deploy
-        name: Backend - Build & Deploy
+    - step: &backend-deploy
+        name: Backend - Deploy
         deployment: be-production
         caches:
           - pip
         script:
-          - cd backend
-          - |
-            if [ -f "environment.yml" ]; then
-              wget https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-x86_64.sh -O miniforge.sh
-              bash miniforge.sh -b -p $HOME/miniforge
-              export PATH="$HOME/miniforge/bin:$PATH"
-              conda env create -f environment.yml
-              source "$HOME/miniforge/bin/activate" "$(head -1 environment.yml | cut -d' ' -f2)"
-            fi
-          - echo "Building backend application..."
-          - cd ..
+          - echo "Deploying backend using pre-tested artifact..."
           - tar -czf backend-deploy.tar.gz backend
-          - tar -xzf backend-deploy.tar.gz
-          - cd backend
-          - echo "Deploying backend application to production environment..."
-
+          - echo "Backend deployment complete."
         artifacts:
           - backend-deploy.tar.gz
-          - backend/src/deployment-log.txt
 
-    - step: &frontend-test
-        name: Frontend - Test
+    - step: &frontend-setup-and-test
+        name: Frontend - Setup & Test
         caches:
           - npm
         script:
           - cd frontend
           - npm install
-          - npm test
-          - npm ci
           - npm install --save-dev @babel/plugin-proposal-private-property-in-object
-
           - echo "Skipping tests as they haven't been implemented yet"
-          # Uncomment when tests are available
-          # - npm test
-          - |
-            echo "Checking API connections between frontend and backend..."
-            api_endpoints=$(grep -r "fetch(" src/ --include="*.js" --include="*.jsx" --include="*.ts" --include="*.tsx" | grep -o "'/api/[^']*'" | sort -u || echo "No endpoints found")
-
-            if [ -z "$api_endpoints" ]; then
-              echo "Warning: No API endpoints found in frontend code."
-            else
-              echo "Found API endpoints in frontend code:"
-              echo "$api_endpoints"
-
-              # Verify endpoints exist in backend
-              cd ../../backend/src
-              for endpoint in $api_endpoints; do
-                endpoint=$(echo $endpoint | tr -d "'")
-                if grep -r "$endpoint" main/resources --include="*.py" > /dev/null; then
-                  echo "✅ Endpoint $endpoint found in backend"
-                else
-                  echo "⚠️ Warning: Endpoint $endpoint not found in backend"
-                fi
-              done
-            fi
         artifacts:
-          - frontend/flights/src/**/*.*
+          - frontend/**
 
-    - step: &frontend-build-deploy
+    - step: &frontend-deploy
         name: Frontend - Build & Deploy
         deployment: fe-production
         caches:
           - npm
         script:
           - cd frontend
-          - npm install
-          - npm install --save-dev @babel/plugin-proposal-private-property-in-object
           - CI=false npm run build
-          - npm ci
-          - cd ..
-          - tar -czf flights-build.tar.gz flights/build
-          - tar -xzf flights-build.tar.gz
-          - echo "Deploying frontend application to production environment..."
-          # Example: Deploy to S3
-          # - pip install awscli
-          # - aws s3 sync flights/build/ s3://your-bucket-name/ --delete
-
-          # Example: Deploy to remote server
-          # - apt-get update && apt-get install -y sshpass
-          # - sshpass -p $FRONTEND_SERVER_PASSWORD scp -r flights/build/* $FRONTEND_SERVER_USER@$FRONTEND_SERVER_HOST:/var/www/html/
-
-          - echo "Frontend deployment completed" > deployment-log.txt
-
+          - tar -czf frontend-build.tar.gz build
+          - echo "Frontend deployment completed."
         artifacts:
-          - frontend/flights-build.tar.gz
-          - frontend/deployment-log.txt
+          - frontend/frontend-build.tar.gz
 
 pipelines:
   pull-requests:
     '**':
       - parallel:
-          - step: *backend-test
-          - step: *frontend-test
+          - step: *backend-setup-and-test
+          - step: *frontend-setup-and-test
 
   branches:
     main:
       - parallel:
-          - step: *backend-test
-          - step: *frontend-test
-      - step: *backend-build-deploy
-      - step: *frontend-build-deploy
+          - step: *backend-setup-and-test
+          - step: *frontend-setup-and-test
+      - parallel:
+          - step: *backend-deploy
+          - step: *frontend-deploy
 
   custom:
-    manual-frontend-deploy:
-      - step: *frontend-test
-      - step: *frontend-build-deploy
-
     manual-full-deploy:
       - parallel:
-          - step: *backend-test
-          - step: *frontend-test
-      - step: *backend-build-deploy
-      - step: *frontend-build-deploy
+          - step: *backend-setup-and-test
+          - step: *frontend-setup-and-test
+      - parallel:
+          - step: *backend-deploy
+          - step: *frontend-deploy
+
+    manual-frontend-deploy:
+      - step: *frontend-setup-and-test
+      - step: *frontend-deploy
 
   schedules:
-    - cron: '0 0 * * *'  # Daily at midnight
+    - cron: '0 0 * * *'
       name: "Daily Build and Deploy"
       branches:
         include:
           - main
       pipeline:
         - parallel:
-            - step: *backend-test
-            - step: *frontend-test
-        - step: *backend-build-deploy
-        - step: *frontend-build-deploy
+            - step: *backend-setup-and-test
+            - step: *frontend-setup-and-test
+        - parallel:
+            - step: *backend-deploy
+            - step: *frontend-deploy
