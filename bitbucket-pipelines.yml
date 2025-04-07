@@ -106,8 +106,7 @@ definitions:
           - npm install --save-dev @babel/plugin-proposal-private-property-in-object
           - CI=false npm run build
           - npm ci
-          - cd ..
-          - tar -czf flights-build.tar.gz flights/build
+          - tar -czf flights-build.tar.gz build
           - tar -xzf flights-build.tar.gz
           - echo "Deploying frontend application to production environment..."
           # Example: Deploy to S3
