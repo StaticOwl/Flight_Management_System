@@ -93,17 +93,3 @@ pipelines:
     manual-frontend-deploy:
       - step: *frontend-setup-and-test
       - step: *frontend-deploy
-
-  schedules:
-    - cron: '0 0 * * *'
-      name: "Daily Build and Deploy"
-      branches:
-        include:
-          - main
-      pipeline:
-        - parallel:
-            - step: *backend-setup-and-test
-            - step: *frontend-setup-and-test
-        - parallel:
-            - step: *backend-deploy
-            - step: *frontend-deploy
