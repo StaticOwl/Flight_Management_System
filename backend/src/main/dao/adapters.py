@@ -300,3 +300,93 @@ def create_flight_crew_assignment(db_session, flight_id, crew_id, role_id):
     except Exception as e:
         print(e)
         raise
+
+def update_user(db_session, user):
+    try:
+        db_session.merge(user)
+        db_session.commit()
+        return user
+    except Exception as e:
+        print(e)
+        raise
+
+def update_airline(db_session, airline):
+    try:
+        db_session.merge(airline)
+        db_session.commit()
+        return airline
+    except Exception as e:
+        print(e)
+        raise
+
+def update_flight(db_session, flight):
+    try:
+        db_session.merge(flight)
+        db_session.commit()
+        return flight
+    except Exception as e:
+        print(e)
+        raise
+
+def update_crew(db_session, crew):
+    try:
+        db_session.merge(crew)
+        db_session.commit()
+        return crew
+    except Exception as e:
+        print(e)
+        raise
+
+def update_crewrole(db_session, crewrole):
+    try:
+        db_session.merge(crewrole)
+        db_session.commit()
+        return crewrole
+    except Exception as e:
+        print(e)
+        raise
+
+def update_booking(db_session, booking):
+    try:
+        db_session.merge(booking)
+        db_session.commit()
+        return booking
+    except Exception as e:
+        print(e)
+        raise
+
+def update_booking_detail(db_session, booking_detail):
+    try:
+        db_session.merge(booking_detail)
+        db_session.commit()
+        return booking_detail
+    except Exception as e:
+        print(e)
+        raise
+
+def update_passenger(db_session, passenger):
+    try:
+        db_session.merge(passenger)
+        db_session.commit()
+        return passenger
+    except Exception as e:
+        print(e)
+        raise
+
+def update_payment(db_session, payment):
+    try:
+        db_session.merge(payment)
+        db_session.commit()
+        return payment
+    except Exception as e:
+        print(e)
+        raise
+
+def update_flightcrewassignment(db_session, flightcrewassignment):
+    try:
+        db_session.merge(flightcrewassignment)
+        db_session.commit()
+        return flightcrewassignment
+    except Exception as e:
+        print(e)
+        raise
