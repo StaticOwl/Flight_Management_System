@@ -6,7 +6,7 @@ import os
 from dotenv import load_dotenv
 
 # Updated import statement
-from .config.config import config
+from main.config.config import config
 
 load_dotenv()
 
@@ -14,7 +14,7 @@ print("Creating App")
 db = SQLAlchemy()
 migrate = Migrate()
 
-def create_app(config_mode="development"):
+def create_app(config_mode="dev"):
     app = Flask(__name__)
     app.config.from_object(config[config_mode])
 

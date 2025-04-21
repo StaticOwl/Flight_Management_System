@@ -32,7 +32,7 @@ def test_table_columns(db_session):
     
     # Test User table columns
     user_columns = {col['name'] for col in inspector.get_columns('Users')}
-    assert user_columns == {'user_id', 'first_name', 'last_name', 'email', 'password', 'phone', 'address'}
+    assert user_columns == {'user_id', 'first_name', 'last_name', 'email', 'password', 'phone', 'address', 'role'}
 
     # Test Flight table columns
     flight_columns = {col['name'] for col in inspector.get_columns('Flights')}

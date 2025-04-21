@@ -98,7 +98,7 @@ def create_user_controller():
         hashed_password=hashed_password,
         phone=data.get('phone'),
         address=data.get('address'),
-        booking_ref=None
+        booking_ref=[]
     )
     return jsonify(user.to_dict()), 201
 
