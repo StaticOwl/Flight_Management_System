@@ -26,7 +26,9 @@ from service.controllers import (
     add_crew_controller,
     update_crew_controller,
     fetch_flights_controller,
-    fetch_roles_controller
+    fetch_roles_controller,
+    fetch_users_controller,
+    update_user_controller
 )
 
 from flask import Blueprint
@@ -65,6 +67,14 @@ def user_operations():
     elif request.method == 'PUT':
         print(request.get_json())
         return update_user_profile_controller(token)
+
+@urls_bp.route("/fetchusers", methods=['GET'])
+def get_users():
+    return fetch_users_controller()
+
+@urls_bp.route('/update-user/<int:user_id>', methods=['PUT'])
+def updateUser(user_id):
+    return update_user_controller(user_id)
     
 @urls_bp.route("/token", methods=['GET'])
 def getUserIdFromToken():

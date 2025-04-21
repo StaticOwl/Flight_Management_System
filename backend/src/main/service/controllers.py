@@ -2,10 +2,11 @@ from flask import request, jsonify, make_response, request, current_app
 from datetime import datetime, timedelta
 from werkzeug.security import generate_password_hash, check_password_hash
 import uuid
-from __init__ import db
+from main.__init__ import db
 import jwt
 from sqlalchemy.exc import SQLAlchemyError
-from dao.models import Airline, Flight, Crew, CrewRole, FlightCrewAssignment, Booking, BookingDetail, Passenger, Payment, User
+from main.dao.models import Airline, Flight, Crew, CrewRole, FlightCrewAssignment, Booking, BookingDetail, Passenger, Payment, User
+import main.dao.adapters as adapter
 
 # ----------------------------------------------- #
 # Query Object Methods => https://docs.sqlalchemy.org/en/14/orm/query.html#sqlalchemy.orm.Query
@@ -141,6 +142,29 @@ def update_crew_controller(crew_id):
 
         db.session.commit()
         return jsonify(crew.to_dict()), 200
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        return make_response(jsonify({"message": "Database error", "error": str(e)}), 500)
+
+
+def update_user_controller(user_id):
+    data = request.get_json()
+
+    # Find the crew member by ID
+    user = db.session.get(User, user_id)
+    if not user:
+        return make_response(jsonify({"message": "User not found"}), 404)
+
+    # Update the crew member's details
+    try:
+        user.first_name = data.get('first_name', user.first_name)
+        user.last_name = data.get('last_name', user.last_name)
+        user.phone = data.get('phone', user.phone)
+        user.email = data.get('email', user.email)
+        user.address = data.get('address', user.address)
+
+        db.session.commit()
+        return jsonify(user.to_dict()), 200
     except SQLAlchemyError as e:
         db.session.rollback()
         return make_response(jsonify({"message": "Database error", "error": str(e)}), 500)
@@ -486,6 +510,12 @@ def fetch_roles_controller():
     print(response)
     return response
 
+def fetch_users_controller():
+    users =  adapter.get_user_by_id(db.session)
+    response = [user.to_dict() for user in users]
+    print(response)
+    return response
+
 def login_controller():
     data = request.get_json()
     if not data or 'email' not in data or 'password' not in data:
@@ -501,14 +531,14 @@ def login_controller():
             'exp': datetime.now() + timedelta(hours=24)
         }, SECRET_KEY, algorithm="HS256")
         return jsonify({
-            'message': 'Login successful', 
-            'token': token, 
+            'message': 'Login successful',
+            'token': token,
             'first_name': user.first_name,
             'role': user.role  # Return role to the frontend
         }), 200
     else:
         return jsonify({'message': 'Invalid password'}), 401
-    
+
 # Add these functions to your controllers.py file
 
 def get_all_users_controller():
@@ -519,14 +549,14 @@ def get_all_users_controller():
         # Get all users
         users = User.query.all()
         user_list = []
-        
+
         for user in users:
             user_dict = user.to_dict()
             # Don't send password hash in response
             if 'password' in user_dict:
                 del user_dict['password']
             user_list.append(user_dict)
-            
+
         return jsonify(user_list)
     except Exception as e:
         return jsonify({'message': f'Error fetching users: {str(e)}'}), 500
@@ -536,25 +566,25 @@ def update_user_role_controller(user_id):
     Admin endpoint to update a user's role
     """
     data = request.get_json()
-    
+
     if not data or 'role' not in data:
         return jsonify({'message': 'Role is required'}), 400
-        
+
     # Validate the role
     valid_roles = ['customer', 'crew', 'admin']
     if data['role'] not in valid_roles:
         return jsonify({'message': f'Invalid role. Must be one of: {", ".join(valid_roles)}'}), 400
-    
+
     try:
         # Get the user
         user = User.query.get(user_id)
         if not user:
             return jsonify({'message': 'User not found'}), 404
-            
+
         # Update the role
         user.role = data['role']
         db.session.commit()
-        
+
         return jsonify({'success': True, 'message': f'User role updated to {data["role"]}'}), 200
     except Exception as e:
         db.session.rollback()
@@ -569,17 +599,17 @@ def get_user_data_for_admin_controller(user_id):
         user = User.query.get(user_id)
         if not user:
             return jsonify({'message': 'User not found'}), 404
-            
+
         # Get user bookings
         bookings = Booking.query.filter_by(user_id=user_id).all()
         booking_data = []
-        
+
         for booking in bookings:
             booking_details = BookingDetail.query.filter_by(booking_id=booking.booking_id).first()
             if booking_details:
                 flight = Flight.query.get(booking_details.flight_id)
                 airline = Airline.query.get(flight.airline_id) if flight else None
-                
+
                 booking_data.append({
                     'booking_id': booking.booking_id,
                     'booking_date': booking_details.booking_date.isoformat() if booking_details.booking_date else None,
@@ -590,15 +620,15 @@ def get_user_data_for_admin_controller(user_id):
                     'departure_airport': flight.departure_airport if flight else None,
                     'arrival_airport': flight.arrival_airport if flight else None
                 })
-        
+
         # Create user data object
         user_data = user.to_dict()
         # Don't send password hash
         if 'password' in user_data:
             del user_data['password']
-            
+
         user_data['bookings'] = booking_data
-        
+
         return jsonify(user_data)
     except Exception as e:
         return jsonify({'message': f'Error fetching user data: {str(e)}'}), 500

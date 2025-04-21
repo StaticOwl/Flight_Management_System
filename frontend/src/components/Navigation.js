@@ -13,7 +13,7 @@ const Navigation = ({ isLoggedIn }) => {
     event.preventDefault(); 
     localStorage.removeItem('token'); 
     localStorage.removeItem('role'); // Clear role on logout
-    window.dispatchEvent(new Event('authChange')); 
+    window.dispatchEvent(new Event('authChange'));
     Navigate('/login');
   };
 
@@ -42,10 +42,10 @@ const Navigation = ({ isLoggedIn }) => {
           <>
             <li><Link to="/">Home</Link></li>
             <li><Link to="/users">{localStorage.getItem('user')}'s DashBoard</Link></li>
-            
+
             {/* Links for all users */}
             <li><Link to="/flights">View Flights</Link></li>
-            
+
             {/* Links for crew and admin only */}
             {(userRole === 'crew' || userRole === 'admin') && (
               <>
@@ -53,12 +53,12 @@ const Navigation = ({ isLoggedIn }) => {
                 <li><Link to="/manage-flights">Manage Flights</Link></li>
               </>
             )}
-            
+
             {/* Links for admin only */}
             {userRole === 'admin' && (
               <li><Link to="/admin">Admin Panel</Link></li>
             )}
-            
+
             <li><a href="/logout" onClick={handleLogout}>Logout</a></li>
           </>
         )}
