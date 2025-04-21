@@ -6,6 +6,26 @@ from main.__init__ import db
 import jwt
 from sqlalchemy.exc import SQLAlchemyError
 from main.dao.models import Airline, Flight, Crew, CrewRole, FlightCrewAssignment, Booking, BookingDetail, Passenger, Payment, User
+from main.dao.adapters import (
+    # Create
+    create_user, create_booking, create_booking_detail, create_flight, create_crew, create_flight_crew_assignment,
+
+    # Get by ID
+    get_user_by_id, get_airline_by_id, get_flight_by_id, get_booking_by_id, get_booking_detail_by_id, get_crew_by_id,
+    get_flightcrewassignment_by_id, get_payment_by_id,
+
+    # Get by Foreign Key
+    get_flights_by_airline_id, get_booking_details_by_booking_id, get_booking_details_by_flight_id, get_bookings_by_user_id,
+    get_passengers_by_booking_detail_id, get_payments_by_booking_detail_id, get_flightcrewassignments_by_flight_id,
+    get_flightcrewassignments_by_crew_id, get_flightcrewassignments_by_role_id,
+
+    # Update
+    update_user, update_crew, update_booking_detail, update_flight, update_payment,
+
+    # Delete
+    delete_user_by_id, delete_booking_by_id, delete_booking_detail_by_id, delete_flight_by_id,
+    delete_flightcrewassignment_by_id, delete_passenger_by_id, delete_paymnet_by_id
+)
 import main.dao.adapters as adapter
 
 # ----------------------------------------------- #
@@ -27,7 +47,9 @@ def login_controller():
     if not data or 'email' not in data or 'password' not in data:
         return jsonify({'message': 'Both email and password are required'}), 400
 
-    user = User.query.filter_by(email=data['email']).first()
+    all_users = get_user_by_id(db.session, None)
+    user = next((u for u in all_users if u.email == data['email']), None)
+
     if not user:
         return jsonify({'message': "User doesn't exist"}), 401
     if user and (check_password_hash(user.password, data['password']) or data['password'] == user.password):
@@ -62,44 +84,51 @@ def create_user_controller():
     if not all(key in data for key in ['first_name', 'last_name', 'email', 'password']):
         return jsonify({'message': 'Missing required fields'}), 400
 
-    if User.query.filter_by(email=data['email']).first():
-        return jsonify({'message': 'Email already in use'}), 409
+    if get_user_by_id(db.session, None):
+        for user in get_user_by_id(db.session, None):
+            if user.email == data['email']:
+                return jsonify({'message': 'Email already in use'}), 409
 
     hashed_password = generate_password_hash(data['password'])
-    user = User(
+    user = create_user(
+        db_session=db.session,
         first_name=data['first_name'],
         last_name=data['last_name'],
         email=data['email'],
-        password=hashed_password,
+        hashed_password=hashed_password,
         phone=data.get('phone'),
-        address=data.get('address')
+        address=data.get('address'),
+        booking_ref=None
     )
-    db.session.add(user)
-    db.session.commit()
     return jsonify(user.to_dict()), 201
+
+
 
 def create_booking_controller():
     data = request.get_json()
-    print(data)
     if not all(key in data for key in ['token', 'flight_id', 'booking_date', 'num_passengers', 'total_cost']):
         return jsonify({'message': 'Missing required fields'}), 400
-    
+
     user_id = get_user_id_from_token(data['token'])['user_id']
-    booking = Booking(user_id=user_id)
-    db.session.add(booking)
-    db.session.flush()  # Get the generated booking_id
-    
-    latest_booking_detail = BookingDetail.query.order_by(BookingDetail.booking_details_id.desc()).first().to_dict()['booking_details_id']
-    booking_detail = BookingDetail(
-        booking_details_id=latest_booking_detail+1,
+    booking = create_booking(
+        db_session=db.session,
+        user_id=user_id,
+        booking_date=datetime.now(),
+        num_passengers=data['num_passengers'],
+        total_cost=data['total_cost']
+    )
+
+    latest_id = max([b.booking_details_id for b in get_booking_detail_by_id(db.session, None)])
+
+    booking_detail = create_booking_detail(
+        db_session=db.session,
         booking_id=booking.booking_id,
         flight_id=data['flight_id'],
         booking_date=datetime.strptime(data['booking_date'], '%Y-%m-%d').date(),
         num_passengers=data['num_passengers'],
         total_cost=data['total_cost']
     )
-    db.session.add(booking_detail)
-    db.session.commit()
+
     return jsonify(booking_detail.to_dict()), 201
 
 
@@ -108,7 +137,8 @@ def create_flight_controller():
     if not all(key in data for key in ['airline_id', 'flight_number', 'departure_airport', 'arrival_airport', 'departure_time', 'arrival_time', 'aircraft_type', 'num_seats']):
         return jsonify({'message': 'Missing required fields'}), 400
 
-    flight = Flight(
+    flight = create_flight(
+        db_session=db.session,
         airline_id=data['airline_id'],
         flight_number=data['flight_number'],
         departure_airport=data['departure_airport'],
@@ -116,31 +146,22 @@ def create_flight_controller():
         departure_time=datetime.strptime(data['departure_time'], '%Y-%m-%dT%H:%M'),
         arrival_time=datetime.strptime(data['arrival_time'], '%Y-%m-%dT%H:%M'),
         aircraft_type=data['aircraft_type'],
-        num_seats=data['num_seats']
+        num_seats=data['num_seats'],
+        price_per_seat=data.get('price_per_seat')
     )
-    db.session.add(flight)
-    db.session.commit()
     return jsonify(flight.to_dict()), 201
 
 
 def update_crew_controller(crew_id):
     data = request.get_json()
-    
-    # Find the crew member by ID
-    crew = db.session.get(Crew, crew_id)
+    crew = get_crew_by_id(db.session, crew_id)
     if not crew:
         return make_response(jsonify({"message": "Crew member not found"}), 404)
-    
-    # Update the crew member's details
+
     try:
         crew.first_name = data.get('first_name', crew.first_name)
         crew.last_name = data.get('last_name', crew.last_name)
-        
-        # Optionally, update other fields if needed
-        # crew.flight_id = data.get('flight_id', crew.flight_id)
-        # crew.role_id = data.get('role_id', crew.role_id)
-
-        db.session.commit()
+        crew = update_crew(db.session, crew)
         return jsonify(crew.to_dict()), 200
     except SQLAlchemyError as e:
         db.session.rollback()
@@ -186,7 +207,9 @@ def search_flights_controller():
 
 def get_user_profile_controller(token):
     user_id = get_user_id_from_token(token)['user_id']
-    user = db.session.get(User, user_id)
+
+    user = get_user_by_id(db.session, user_id)
+
     if not user:
         return jsonify({'message': 'User not found'}), 404
 
@@ -275,10 +298,11 @@ def get_booking_history_controller(token):
 
 
 def get_airline_dashboard_controller(airline_id):
-    airline = db.session.get(Airline, airline_id)
+    airline = get_airline_by_id(db.session, airline_id)
+
     if airline:
         airline_dict = airline.to_dict()
-        airline_dict['flights'] = [flight.to_dict() for flight in airline.flight_ref]
+        airline_dict['flights'] = [f.to_dict() for f in get_flights_by_airline_id(db.session, airline_id)]
         return jsonify(airline_dict)
     else:
         return jsonify({'message': 'Airline not found'}), 404
@@ -287,11 +311,9 @@ def get_airline_dashboard_controller(airline_id):
 def update_user_profile_controller(token):
     data = request.get_json()
     user_id = get_user_id_from_token(token)['user_id']
-    user = db.session.get(User, user_id)
+    user = get_user_by_id(db.session, user_id)
     if not user:
         return jsonify({'message': 'User not found'}), 404
-    
-    print(data)
 
     if 'first_name' in data: user.first_name = data['first_name']
     if 'last_name' in data: user.last_name = data['last_name']
@@ -299,17 +321,16 @@ def update_user_profile_controller(token):
     if 'phone' in data: user.phone = data['phone']
     if 'address' in data: user.address = data['address']
     if 'current' in data:
-        print(data['current'])
-        password = data['current']
-        if check_password_hash(user.password) == password:
+        if check_password_hash(user.password, data['current']):
             user.password = generate_password_hash(data['new'])
-    db.session.commit()
+    user = update_user(db.session, user)
     return jsonify(user.to_dict())
+
 
 
 def modify_booking_controller(booking_id):
     data = request.get_json()
-    booking_detail = db.session.get(BookingDetail, booking_id)
+    booking_detail = get_booking_detail_by_id(db.session, booking_id)
     if not booking_detail:
         return jsonify({'message': 'Booking not found'}), 404
 
@@ -317,8 +338,7 @@ def modify_booking_controller(booking_id):
     if 'booking_date' in data: booking_detail.booking_date = datetime.strptime(data['booking_date'], '%Y-%m-%d').date()
     if 'num_passengers' in data: booking_detail.num_passengers = data['num_passengers']
     if 'total_cost' in data: booking_detail.total_cost = data['total_cost']
-
-    db.session.commit()
+    booking_detail = update_booking_detail(db.session, booking_detail)
     return jsonify(booking_detail.to_dict())
 
 
@@ -356,45 +376,31 @@ def update_crew_assignment_controller(flight_id):
     return jsonify({'message': 'Crew assignments updated successfully'})
 
 def cancel_booking_controller(booking_id):
-    booking_detail = BookingDetail.query.filter_by(booking_id=booking_id).all()
-    booking = db.session.get(Booking, booking_id)
-    if not (booking_detail or booking):
-        return jsonify({'message': 'Booking not found'}), 404
-    for detail in booking_detail:
-        db.session.delete(detail)
-
-    db.session.delete(booking)
-    db.session.commit()
-    return jsonify({'message': 'Booking canceled successfully', 'success':True})
-
+    try:
+        delete_booking_by_id(db.session, booking_id, cascade=True)
+        return jsonify({'message': 'Booking canceled successfully', 'success': True})
+    except Exception as e:
+        return jsonify({'message': str(e)}), 500
 
 def delete_user_account_controller(user_id):
-    user = db.session.get(User, user_id)
-    if not user:
-        return jsonify({'message': 'User not found'}), 404
-
-    bookings = Booking.query.filter_by(user_id=user_id).all()
-    for booking in bookings:
-        booking_details = BookingDetail.query.filter_by(booking_id=booking.booking_id).all()
-        for detail in booking_details:
-            db.session.delete(detail)
-        db.session.delete(booking)
-    db.session.delete(user)
-    db.session.commit()
-    return jsonify({'message': 'User account deleted successfully'})
+    try:
+        delete_user_by_id(db.session, user_id)
+        return jsonify({'message': 'User account deleted successfully'})
+    except Exception as e:
+        return jsonify({'message': str(e)}), 500
 
 
 def remove_outdated_data_controller():
     current_time = datetime.now()
+
     outdated_flights = Flight.query.filter(Flight.arrival_time < current_time).all()
     for flight in outdated_flights:
-        db.session.delete(flight)
+        delete_flight_by_id(db.session, flight.flight_id, cascade=True)
 
-    outdated_crew_assignments = FlightCrewAssignment.query.join(Flight).filter(Flight.arrival_time < current_time).all()
-    for assignment in outdated_crew_assignments:
-        db.session.delete(assignment)
+    outdated_assignments = FlightCrewAssignment.query.join(Flight).filter(Flight.arrival_time < current_time).all()
+    for assignment in outdated_assignments:
+        delete_flightcrewassignment_by_id(db.session, assignment.id)
 
-    db.session.commit()
     return jsonify({'message': 'Outdated operational data removed successfully'})
 
 def get_crew_assignment_controller(flight_id):
@@ -415,23 +421,23 @@ def get_crew_assignment_controller(flight_id):
         })
     return jsonify(response)
 
+
 def fetch_airlines(airline_id=None):
     if not airline_id:
-        airlines = Airline.query.all()
+        airlines = get_airline_by_id(db.session, None)
         response = [{"id": airline.airline_id, "name": airline.airline_name} for airline in airlines]
-    
         return response
     else:
-        flights = Flight.query.filter_by(airline_id=airline_id).all()
+        flights = get_flights_by_airline_id(db.session, airline_id)
         if not flights:
-            return jsonify({'message':'No Flight found for this airline'}), 401
+            return jsonify({'message': 'No Flight found for this airline'}), 401
         response = [{
-            "id": flight.flight_id, 
+            "id": flight.flight_id,
             "flight_number": flight.flight_number,
             "departure_airport": flight.departure_airport,
             "arrival_airport": flight.arrival_airport,
             "price_per_seat": flight.price_per_seat
-            } for flight in flights]
+        } for flight in flights]
         return response
     
 def get_crews():
