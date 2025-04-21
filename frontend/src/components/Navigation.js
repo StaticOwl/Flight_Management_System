@@ -42,6 +42,7 @@ const Navigation = ({ isLoggedIn }) => {
             <li><Link to="/users">{localStorage.getItem('user')}'s DashBoard</Link></li>
             <li><Link to="/flights">Flights</Link></li>
             <li><Link to="/crews">Crews</Link></li>
+            <li><Link to="/manage-users">Users</Link></li>
             <li><a href="/logout" onClick={handleLogout}>Logout</a></li>
           </>
         )}
