@@ -1,13 +1,45 @@
-This is a dummy project for HW1A for ACS567 SPM.
+# ACS567 SPM – Flight Management System
 
-This project runs with PostgresSQL and NodeJs.
+This is a full-stack project built for the ACS567 Software Project Management course. 
+It includes:
 
-Individual readmes for backend and frontend can be found inside the respective folders.
+- **Backend**: Python 3.12 with Flask and PostgreSQL
+- **Frontend**: React.js
 
-Else you can run the backend with > Python3.9. To install the requirements use pip install -r requirements.txt. You need to install postgres natively in your system, refer to Postgres original documentation. Once you are done use the SQL provided to create the database and run app.py.
+---
+## ⚙️ Setup Overview
 
-Frontend is created with react, so native react commands should work as is.
+### 🛠 Backend
 
-Author: Koustav Mallick
+* Podman Setup: [podman-backend Documentation](./backend/backend.md#-option-1-podman--docker-setup-recommended)
+* Standalone Installation and Init Setup: [backend README](./backend/backend.md#-option-2-standalone-setup-without-containers).
+* Backend Documentation: [backend README](./backend/backend.md)
 
-To run backend tests, cd into the backend/src/tests folder and run `pytest -s`.
+---
+
+### 🎨 Frontend
+The frontend is built with **React**.
+
+- Navigate to the frontend directory and use standard React commands like:
+  ```bash
+  npm install
+  npm start
+  ```
+
+Refer to [frontend README](./frontend/frontend.md) for full instructions.
+
+---
+
+### 🧪 Running Tests
+
+To run backend tests:
+```bash
+cd backend/src/tests
+pytest -s
+```
+
+---
+
+## 👤 Author
+
+**Koustav Mallick**

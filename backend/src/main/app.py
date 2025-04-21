@@ -17,4 +17,4 @@ from service.urls import urls_bp
 app.register_blueprint(urls_bp)
 
 if __name__ == "__main__":
-    app.run()
+    app.run(host="0.0.0.0", port=5000)
