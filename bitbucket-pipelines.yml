@@ -66,11 +66,11 @@ definitions:
           - frontend/frontend-build.tar.gz
 
 pipelines:
-  pull-requests:
-    '**':
-      - parallel:
-          - step: *backend-setup-and-test
-          - step: *frontend-setup-and-test
+#  pull-requests:
+#    '**':
+#      - parallel:
+#          - step: *backend-setup-and-test
+#          - step: *frontend-setup-and-test
 
   branches:
     main:
