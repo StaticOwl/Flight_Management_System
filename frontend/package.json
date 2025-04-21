@@ -10,12 +10,17 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.23.0",
+<<<<<<< HEAD:frontend/flights/package.json
+    "react-scripts": "^5.0.1",
+    "web-vitals": "^2.1.4"
+=======
     "react-scripts": "5.0.1",
     "web-vitals": "^2.1.4",
     "webpack-dev-server": "^4.7.0"
   },
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11"
+>>>>>>> main:frontend/package.json
   },
   "scripts": {
     "start": "react-scripts start",

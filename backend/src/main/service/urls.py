@@ -1,9 +1,9 @@
-from flask import request, jsonify, current_app
-import requests
-import inspect
-from main.dao import models as models
+from flask import request, jsonify
 
-from main.service.controllers import (
+from service.middleware import role_required
+
+
+from service.controllers import (
     list_all_controller,
     create_user_controller,
     create_booking_controller,
@@ -152,23 +152,38 @@ def fetch_flights():
 def fetch_roles():
     return fetch_roles_controller()
 
-@urls_bp.route("/dbstatus", methods=['GET'])
-def status():
-    status_report = {}
-    base_url = request.host_url.rstrip('/')
+# Admin routes
+@urls_bp.route("/admin/users", methods=['GET'])
+@role_required(['admin'])
+def admin_get_users():
+    return get_all_users_controller()
 
-    models_list = [
-        name for name, cls in inspect.getmembers(models, inspect.isclass)
-        if hasattr(cls, '__tablename__') and cls.__module__ == models.__name__
-    ]
+@urls_bp.route("/admin/users/<int:user_id>/role", methods=['PUT'])
+@role_required(['admin'])
+def admin_update_user_role(user_id):
+    return update_user_role_controller(user_id)
 
-    print(models_list)
+@urls_bp.route("/admin/users/<int:user_id>", methods=['GET'])
+@role_required(['admin'])
+def admin_get_user_data(user_id):
+    return get_user_data_for_admin_controller(user_id)
 
-    for model in models_list:
-        try:
-            response = requests.get(f"{base_url}/api/{model}")
-            status_report[f"/api/{model}"] = f"{response.status_code}" if response.ok else f"{response.status_code}"
-        except Exception as e:
-            status_report[f"/api/{model}"] = f"Error: {str(e)}"
+# Crew routes (accessible by crew and admin)
+@urls_bp.route("/crew/flights", methods=['POST'])
+@role_required(['crew', 'admin'])
+def crew_add_flight():
+    return create_flight_controller()
 
-    return jsonify(status_report)
+@urls_bp.route("/crew/flights/<int:flight_id>", methods=['PUT'])
+@role_required(['crew', 'admin'])
+def crew_update_flight(flight_id):
+    # You'll need to implement this controller function
+    return update_flight_controller(flight_id)
+
+@urls_bp.route("/crew/assignments", methods=['GET'])
+@role_required(['crew', 'admin'])
+def crew_get_assignments():
+    # Get all crew assignments for the crew member
+    token = request.headers.get('Authorization').split(' ')[1]
+    user_id = get_user_id_from_token(token)['user_id']
+    return get_crew_assignments_controller(user_id)

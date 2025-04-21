@@ -1,13 +1,12 @@
-import os
 
-# App Initialization
 import os
-from main.__init__ import create_app
+from . import create_app
 
 app = create_app()
 
 # Hello World!
 @app.route('/')
+
 def hello():
     with app.app_context():
         for rule in app.url_map.iter_rules():
