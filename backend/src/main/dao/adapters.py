@@ -390,3 +390,157 @@ def update_flightcrewassignment(db_session, flightcrewassignment):
     except Exception as e:
         print(e)
         raise
+
+def get_user_by_id(db_session, user_id=None):
+    try:
+        if user_id is None:
+            return User.query.all()
+        return User.query.filter_by(user_id=user_id).first()
+    except Exception as e:
+        print(e)
+        raise
+
+def get_airline_by_id(db_session, airline_id=None):
+    try:
+        if airline_id is None:
+            return Airline.query.all()
+        return Airline.query.filter_by(airline_id=airline_id).first()
+    except Exception as e:
+        print(e)
+        raise
+
+def get_booking_detail_by_id(db_session, booking_detail_id=None):
+    try:
+        if booking_detail_id is None:
+            return BookingDetail.query.all()
+        return BookingDetail.query.filter_by(booking_details_id=booking_detail_id).first()
+    except Exception as e:
+        print(e)
+        raise
+
+def get_booking_by_id(db_session, booking_id=None):
+    try:
+        if booking_id is None:
+            return Booking.query.all()
+        return Booking.query.filter_by(booking_id=booking_id).first()
+    except Exception as e:
+        print(e)
+        raise
+
+def get_crew_by_id(db_session, crew_id=None):
+    try:
+        if crew_id is None:
+            return Crew.query.all()
+        return Crew.query.filter_by(crew_id=crew_id).first()
+    except Exception as e:
+        print(e)
+        raise
+
+def get_crewrole_by_id(db_session, crewrole_id=None):
+    try:
+        if crewrole_id is None:
+            return CrewRole.query.all()
+        return CrewRole.query.filter_by(role_id=crewrole_id).first()
+    except Exception as e:
+        print(e)
+        raise
+
+def get_flightcrewassignment_by_id(db_session, flightcrewassignment_id=None):
+    try:
+        if flightcrewassignment_id is None:
+            return FlightCrewAssignment.query.all()
+        return FlightCrewAssignment.query.filter_by(id=flightcrewassignment_id).first()
+    except Exception as e:
+        print(e)
+        raise
+
+def get_flight_by_id(db_session, flight_id=None):
+    try:
+        if flight_id is None:
+            return Flight.query.all()
+        return Flight.query.filter_by(flight_id=flight_id).first()
+    except Exception as e:
+        print(e)
+        raise
+
+def get_passenger_by_id(db_session, passenger_id=None):
+    try:
+        if passenger_id is None:
+            return Passenger.query.all()
+        return Passenger.query.filter_by(passenger_id=passenger_id).first()
+    except Exception as e:
+        print(e)
+        raise
+
+def get_payment_by_id(db_session, payment_id=None):
+    try:
+        if payment_id is None:
+            return Payment.query.all()
+        return Payment.query.filter_by(payment_id=payment_id).first()
+    except Exception as e:
+        print(e)
+        raise
+
+
+def get_flights_by_airline_id(db_session, airline_id):
+    try:
+        return Flight.query.filter_by(airline_id=airline_id).all()
+    except Exception as e:
+        print(e)
+        raise
+
+def get_booking_details_by_booking_id(db_session, booking_id):
+    try:
+        return BookingDetail.query.filter_by(booking_id=booking_id).all()
+    except Exception as e:
+        print(e)
+        raise
+
+def get_booking_details_by_flight_id(db_session, flight_id):
+    try:
+        return BookingDetail.query.filter_by(flight_id=flight_id).all()
+    except Exception as e:
+        print(e)
+        raise
+
+def get_passengers_by_booking_detail_id(db_session, booking_details_id):
+    try:
+        return Passenger.query.filter_by(booking_details_id=booking_details_id).all()
+    except Exception as e:
+        print(e)
+        raise
+
+def get_payments_by_booking_detail_id(db_session, booking_details_id):
+    try:
+        return Payment.query.filter_by(booking_details_id=booking_details_id).all()
+    except Exception as e:
+        print(e)
+        raise
+
+def get_flightcrewassignments_by_flight_id(db_session, flight_id):
+    try:
+        return FlightCrewAssignment.query.filter_by(flight_id=flight_id).all()
+    except Exception as e:
+        print(e)
+        raise
+
+def get_flightcrewassignments_by_crew_id(db_session, crew_id):
+    try:
+        return FlightCrewAssignment.query.filter_by(crew_id=crew_id).all()
+    except Exception as e:
+        print(e)
+        raise
+
+def get_flightcrewassignments_by_role_id(db_session, role_id):
+    try:
+        return FlightCrewAssignment.query.filter_by(role_id=role_id).all()
+    except Exception as e:
+        print(e)
+        raise
+
+def get_bookings_by_user_id(db_session, user_id):
+    try:
+        return Booking.query.filter_by(user_id=user_id).all()
+    except Exception as e:
+        print(e)
+        raise

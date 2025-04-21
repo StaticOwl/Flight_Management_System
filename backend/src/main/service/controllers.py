@@ -26,6 +26,7 @@ from main.dao.adapters import (
     delete_user_by_id, delete_booking_by_id, delete_booking_detail_by_id, delete_flight_by_id,
     delete_flightcrewassignment_by_id, delete_passenger_by_id, delete_paymnet_by_id
 )
+import main.dao.adapters as adapter
 
 # ----------------------------------------------- #
 # Query Object Methods => https://docs.sqlalchemy.org/en/14/orm/query.html#sqlalchemy.orm.Query
@@ -162,6 +163,29 @@ def update_crew_controller(crew_id):
         crew.last_name = data.get('last_name', crew.last_name)
         crew = update_crew(db.session, crew)
         return jsonify(crew.to_dict()), 200
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        return make_response(jsonify({"message": "Database error", "error": str(e)}), 500)
+
+
+def update_user_controller(user_id):
+    data = request.get_json()
+
+    # Find the crew member by ID
+    user = db.session.get(User, user_id)
+    if not user:
+        return make_response(jsonify({"message": "User not found"}), 404)
+
+    # Update the crew member's details
+    try:
+        user.first_name = data.get('first_name', user.first_name)
+        user.last_name = data.get('last_name', user.last_name)
+        user.phone = data.get('phone', user.phone)
+        user.email = data.get('email', user.email)
+        user.address = data.get('address', user.address)
+
+        db.session.commit()
+        return jsonify(user.to_dict()), 200
     except SQLAlchemyError as e:
         db.session.rollback()
         return make_response(jsonify({"message": "Database error", "error": str(e)}), 500)
@@ -489,5 +513,11 @@ def fetch_flights_controller():
 def fetch_roles_controller():
     roles = CrewRole.query.all()
     response = [role.to_dict() for role in roles]
+    print(response)
+    return response
+
+def fetch_users_controller():
+    users =  adapter.get_user_by_id(db.session)
+    response = [user.to_dict() for user in users]
     print(response)
     return response
