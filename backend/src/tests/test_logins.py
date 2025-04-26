@@ -69,3 +69,5 @@ def test_login_missing_field_failure(test_client):
     assert response.status_code == 400
     assert b"Both email and password are required" in response.data
 
+
+
