@@ -1,37 +1,24 @@
-from flask import request, jsonify, make_response, request, current_app
 from datetime import datetime, timedelta
-from werkzeug.security import generate_password_hash, check_password_hash
-import uuid
-from main.__init__ import db
+
 import jwt
+from flask import jsonify, make_response, request, current_app
 from sqlalchemy.exc import SQLAlchemyError
-from main.dao.models import Airline, Flight, Crew, CrewRole, FlightCrewAssignment, Booking, BookingDetail, Passenger, Payment, User
+from werkzeug.security import generate_password_hash, check_password_hash
+
+import main.dao.adapters as adapter
+from main import db
 from main.dao.adapters import (
     # Create
-    create_user, create_booking, create_booking_detail, create_flight, create_crew, create_flight_crew_assignment,
-
-    # Get by ID
-    get_user_by_id, get_airline_by_id, get_flight_by_id, get_booking_by_id, get_booking_detail_by_id, get_crew_by_id,
-    get_flightcrewassignment_by_id, get_payment_by_id,
-
+    create_user, create_booking, create_booking_detail, create_flight,  # Get by ID
+    get_user_by_id, get_airline_by_id, get_booking_detail_by_id, get_crew_by_id,
     # Get by Foreign Key
-    get_flights_by_airline_id, get_booking_details_by_booking_id, get_booking_details_by_flight_id, get_bookings_by_user_id,
-    get_passengers_by_booking_detail_id, get_payments_by_booking_detail_id, get_flightcrewassignments_by_flight_id,
-    get_flightcrewassignments_by_crew_id, get_flightcrewassignments_by_role_id,
-
-    # Update
-    update_user, update_crew, update_booking_detail, update_flight, update_payment,
-
-    # Delete
-    delete_user_by_id, delete_booking_by_id, delete_booking_detail_by_id, delete_flight_by_id,
-    delete_flightcrewassignment_by_id, delete_passenger_by_id, delete_payment_by_id
+    get_flights_by_airline_id,  # Update
+    update_user, update_crew, update_booking_detail,  # Delete
+    delete_user_by_id, delete_booking_by_id, delete_flight_by_id,
+    delete_flightcrewassignment_by_id
 )
-import main.dao.adapters as adapter
+from main.dao.models import Airline, Flight, Crew, CrewRole, FlightCrewAssignment, Booking, BookingDetail, User
 
-# ----------------------------------------------- #
-# Query Object Methods => https://docs.sqlalchemy.org/en/14/orm/query.html#sqlalchemy.orm.Query
-# Session Object Methods => https://docs.sqlalchemy.org/en/14/orm/session_api.html#sqlalchemy.orm.Session
-# How to serialize SqlAlchemy PostgreSQL Query to JSON => https://stackoverflow.com/a/46180522
 SECRET_KEY = 'A3498fdssADE'
 
 def list_all_controller(class_name):

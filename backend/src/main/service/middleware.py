@@ -1,7 +1,7 @@
 from functools import wraps
-from flask import request, jsonify
+
 import jwt
-from __init__ import db
+from flask import request, jsonify
 
 # Use the same secret key that's used in your controllers.py
 SECRET_KEY = ''
