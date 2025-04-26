@@ -67,6 +67,8 @@ def user_operations():
     elif request.method == 'PUT':
         print(request.get_json())
         return update_user_profile_controller(token)
+    return None
+
 
 @urls_bp.route("/fetchusers", methods=['GET'])
 def get_users():
@@ -96,6 +98,8 @@ def booking_operations(booking_id):
         return modify_booking_controller(booking_id)
     elif request.method == 'DELETE':
         return cancel_booking_controller(booking_id)
+    return None
+
 
 @urls_bp.route("/users/bookings", methods=['GET'])
 def user_bookings():

@@ -5,6 +5,7 @@
      email VARCHAR(100) UNIQUE NOT NULL,
      password VARCHAR(100) NOT NULL,
      phone VARCHAR(20),
+     role VARCHAR(20),
      address VARCHAR(200)
  );
 

@@ -2,19 +2,15 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_cors import CORS
-import os
-from dotenv import load_dotenv
 
 # Updated import statement
-from .config.config import config
-
-load_dotenv()
+from main.config.config import config
 
 print("Creating App")
 db = SQLAlchemy()
 migrate = Migrate()
 
-def create_app(config_mode="development"):
+def create_app(config_mode="dev"):
     app = Flask(__name__)
     app.config.from_object(config[config_mode])
 

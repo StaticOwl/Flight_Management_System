@@ -1,11 +1,11 @@
 
 -- Users
-INSERT INTO users (first_name, last_name, email, password, phone, address) VALUES
-('John', 'Doe', 'john.doe@email.com', 'password123', '1234567890', '123 Main St, City, Country'),
-('Jane', 'Smith', 'jane.smith@email.com', 'pass456', '9876543210', '456 Oak Ave, Town, Country'),
-('Michael', 'Johnson', 'michael.johnson@email.com', 'securepass', '5551234567', '789 Elm Rd, Village, Country'),
-('Emily', 'Williams', 'emily.williams@email.com', 'pass123456', '1112223333', '321 Pine St, City, Country'),
-('David', 'Brown', 'david.brown@email.com', 'password123!', '4445556666', '654 Maple Ln, Town, Country')
+INSERT INTO users (first_name, last_name, email, password, phone, role, address) VALUES
+('John', 'Doe', 'john.doe@email.com', 'password123', '1234567890', 'customer', '123 Main St, City, Country'),
+('Jane', 'Smith', 'jane.smith@email.com', 'pass456', '9876543210', 'customer', '456 Oak Ave, Town, Country'),
+('Michael', 'Johnson', 'michael.johnson@email.com', 'securepass', '5551234567', 'admin', '789 Elm Rd, Village, Country'),
+('Emily', 'Williams', 'emily.williams@email.com', 'pass123456', '1112223333', 'customer', '321 Pine St, City, Country'),
+('David', 'Brown', 'david.brown@email.com', 'password123!', '4445556666', 'customer', '654 Maple Ln, Town, Country')
 ;
 -- Airlines
 INSERT INTO airlines (airline_name, contact_email, contact_phone) VALUES

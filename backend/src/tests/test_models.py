@@ -1,7 +1,7 @@
 import pytest
 
 from main.dao.adapters import delete_user_by_id, delete_airline_by_id, delete_booking_detail_by_id, delete_booking_by_id, delete_crew_by_id, \
-    delete_crewrole_by_id, delete_flightcrewassignment_by_id, delete_flight_by_id, delete_passenger_by_id, delete_paymnet_by_id
+    delete_crewrole_by_id, delete_flightcrewassignment_by_id, delete_flight_by_id, delete_passenger_by_id, delete_payment_by_id
 from main.dao.models import User, Airline, BookingDetail, Booking, Crew, CrewRole, FlightCrewAssignment, Flight, Passenger, Payment
 
 #Read
@@ -413,7 +413,7 @@ def test_delete_payment(db_session):
 
     TESTS SQLAlchemy setup for Update
     """
-    delete_paymnet_by_id(db_session, 1)
+    delete_payment_by_id(db_session, 1)
 
     u2 = db_session.get(Payment, 1)
     assert not u2

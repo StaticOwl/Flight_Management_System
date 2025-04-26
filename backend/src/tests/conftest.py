@@ -15,7 +15,7 @@ from main.__init__ import create_app, db
 @pytest.fixture(scope='session')
 def test_app():
     """Create and configure a new Flask test app instance."""
-    app = create_app()
+    app = create_app(config_mode='test')
 
     from main.service.urls import urls_bp
     app.register_blueprint(urls_bp)

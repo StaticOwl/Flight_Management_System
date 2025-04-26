@@ -29,23 +29,6 @@ const getUsers = async() => {
     return await response.json();
 }
 
-const updateUser2 = async (user) => {
-    try{
-        const token = localStorage.getItem('token')
-        const response = await axios.put(`${API_BASE_URL}/update-user/${user.user_id}`, user, {
-            headers:{
-                'Content-Type':'application/json',
-                Authorization : `Bearer ${token}`
-            }
-        });
-        return response.success;
-    }
-    catch(error){
-        console.error('Error Updating Data:', error);
-        return false;
-    }
-};
-
 const updateUser = async (user) => {
     try{
         const token = localStorage.getItem('token')
