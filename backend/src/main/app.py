@@ -1,5 +1,6 @@
 import os
-from main import create_app, db
+
+from main import create_app
 
 app = create_app(config_mode=os.getenv('FLASK_ENV') or 'dev')
 

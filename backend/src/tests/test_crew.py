@@ -1,6 +1,3 @@
-import pytest
-
-
 def test_get_crew_success(test_client):
     """
     GIVEN a Flask application configured for testing

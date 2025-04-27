@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { GlobalProvider } from './context/GlobalState';
+import React, {useEffect, useState} from 'react';
+import {BrowserRouter as Router, Navigate, Route, Routes} from 'react-router-dom';
+import {GlobalProvider} from './context/GlobalState';
 import Users from './components/Users';
 import Login from './components/Login';
 import Register from './components/Register';

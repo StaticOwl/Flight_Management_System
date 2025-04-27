@@ -1,7 +1,6 @@
 from datetime import timedelta, datetime
 
 import jwt
-import pytest
 
 from service.controllers import SECRET_KEY
 from tests.utils import get_auth_token

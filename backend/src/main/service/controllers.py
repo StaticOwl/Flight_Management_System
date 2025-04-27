@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 
 import jwt
-from flask import jsonify, make_response, request, current_app
+from flask import jsonify, make_response, request
 from sqlalchemy.exc import SQLAlchemyError
 from werkzeug.security import generate_password_hash, check_password_hash
 

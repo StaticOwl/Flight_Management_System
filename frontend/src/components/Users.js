@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import ApiService from '../api/ApiService';
-import { useNavigate } from 'react-router-dom';
-import '../App.css';  // Make sure this is correctly linked
+import {useNavigate} from 'react-router-dom';
+import '../App.css'; // Make sure this is correctly linked
 
 function Users() {
     const [user, setUser] = useState({

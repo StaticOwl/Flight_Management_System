@@ -1,7 +1,8 @@
-import pytest
+import os
 import sys
 
-import os
+import pytest
+
 os.environ['FLASK_ENV'] = 'test'
 os.environ['DATABASE_URL'] = 'sqlite:///:memory:'
 

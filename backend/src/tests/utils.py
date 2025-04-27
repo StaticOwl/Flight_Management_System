@@ -1,4 +1,3 @@
-import pytest
 import uuid
 
 def get_auth_token(test_client, db_session, user_id=1):

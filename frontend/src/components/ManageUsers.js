@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, {useEffect, useState} from 'react';
 import ApiService from '../api/ApiService';
-import '../App.css';  // Ensure styles are properly linked
+import '../App.css'; // Ensure styles are properly linked
 
 function ManageUsers() {
     const [users, setUsers] = useState([]);

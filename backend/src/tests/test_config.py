@@ -1,5 +1,5 @@
 import os
-import pytest
+
 
 def test_config_loading(test_app):
     """Test if the app loads the testing configuration"""
