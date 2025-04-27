@@ -1,9 +1,10 @@
 import os
+import main.config.defaults as defaults
 
 
 class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = True
-    SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL")
+    SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL", defaults.DATABASE_URL)
 
 class DevelopmentConfig(Config):
     DEVELOPMENT = True
