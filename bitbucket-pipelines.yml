@@ -25,20 +25,6 @@ definitions:
               echo "Coverage is below 90%. Current coverage: $coverage%"
               exit 1
             fi
-        artifacts:
-          - backend/**
-
-    - step: &backend-deploy
-        name: Backend - Deploy
-        deployment: be-production
-        caches:
-          - pip
-        script:
-          - echo "Deploying backend using pre-tested artifact..."
-          - tar -czf backend-deploy.tar.gz backend
-          - echo "Backend deployment complete."
-        artifacts:
-          - backend-deploy.tar.gz
 
     - step: &frontend-setup-and-test
         name: Frontend - Setup & Test
@@ -49,47 +35,31 @@ definitions:
           - npm install
           - npm install --save-dev @babel/plugin-proposal-private-property-in-object
           - echo "Skipping tests as they haven't been implemented yet"
-        artifacts:
-          - frontend/**
 
-    - step: &frontend-deploy
-        name: Frontend - Build & Deploy
-        deployment: fe-production
-        caches:
-          - npm
+    - step: &deploy-backend
+        name: Deploy Backend to Render
         script:
-          - cd frontend
-          - CI=false npm run build
-          - tar -czf frontend-build.tar.gz build
-          - echo "Frontend deployment completed."
-        artifacts:
-          - frontend/frontend-build.tar.gz
+          - echo "Deploying Backend to Render..."
+          - >
+            curl -X POST "https://api.render.com/v1/services/$RENDER_BACKEND_SERVICE_ID/deploys" 
+            -H "Accept: application/json" 
+            -H "Authorization: Bearer $RENDER_API_KEY"
+
+    - step: &deploy-frontend
+        name: Deploy Frontend to Render
+        script:
+          - echo "Deploying Frontend to Render..."
+          - >
+            curl -X POST "https://api.render.com/v1/services/$RENDER_FRONTEND_SERVICE_ID/deploys" 
+            -H "Accept: application/json" 
+            -H "Authorization: Bearer $RENDER_API_KEY"
 
 pipelines:
-#  pull-requests:
-#    '**':
-#      - parallel:
-#          - step: *backend-setup-and-test
-#          - step: *frontend-setup-and-test
-
   branches:
     main:
       - parallel:
           - step: *backend-setup-and-test
           - step: *frontend-setup-and-test
       - parallel:
-          - step: *backend-deploy
-          - step: *frontend-deploy
-
-  custom:
-    manual-full-deploy:
-      - parallel:
-          - step: *backend-setup-and-test
-          - step: *frontend-setup-and-test
-      - parallel:
-          - step: *backend-deploy
-          - step: *frontend-deploy
-
-    manual-frontend-deploy:
-      - step: *frontend-setup-and-test
-      - step: *frontend-deploy
+          - step: *deploy-backend
+          - step: *deploy-frontend
