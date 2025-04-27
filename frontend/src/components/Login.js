@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, {useEffect, useState} from 'react';
+import {useNavigate} from 'react-router-dom';
 import ApiService from '../api/ApiService'; // Import your API service
 
 const Login = () => {
@@ -21,12 +21,13 @@ const Login = () => {
       setError('Please enter both email and password');
       return;
     }
-
+  
     try {
       const response = await ApiService.login(email, password);
       console.log(response.data);
       localStorage.setItem('token', response.data.token);
       localStorage.setItem('user', response.data.first_name);
+      localStorage.setItem('role', response.data.role); // Store the user's role
       window.dispatchEvent(new Event('authChange'));
     } catch (error) {
       setError('Invalid email or password');

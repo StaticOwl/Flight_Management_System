@@ -6,6 +6,7 @@ def delete_user_by_id(db_session, user_id):
         db_session.commit()
         return True
     except Exception as e:
+        db_session.rollback()
         print(e)
         raise
 
@@ -22,6 +23,7 @@ def delete_airline_by_id(db_session, airline_id, cascade = False):
         Airline.query.filter_by(airline_id=airline_id).delete()
         db_session.commit()
     except Exception as e:
+        db_session.rollback()
         print(e)
         raise
 
@@ -39,27 +41,34 @@ def delete_booking_detail_by_id(db_session, booking_detail_id, cascade = False):
             pays = Payment.query.filter_by(booking_details_id=booking_detail_id).all()
 
             for py in pays:
-                delete_paymnet_by_id(db_session, py.payment_id, cascade)
+                delete_payment_by_id(db_session, py.payment_id, cascade)
         BookingDetail.query.filter_by(booking_details_id=booking_detail_id).delete()
         db_session.commit()
     except Exception as e:
+        db_session.rollback()
         print(e)
         raise
 
 def delete_booking_by_id(db_session, booking_id, cascade = False):
-
     #ref'd in BookingDetails
     try:
         if cascade:
             print("Cascading")
             # Get all flights ref'ing airline
-            bookingdetails = BookingDetail.query.filter_by(booking_id=booking_id).all()
+            booking_details = db_session.query(BookingDetail).filter_by(booking_id=booking_id).all()
             # For each flight, delete that flight
-            for b in bookingdetails:
+            for b in booking_details:
                 delete_booking_detail_by_id(db_session, b.booking_details_id, cascade)
-        Booking.query.filter_by(booking_id=booking_id).delete()
+
+        booking_to_delete = db_session.query(Booking).filter_by(booking_id=booking_id).first()
+        if booking_to_delete:
+            db_session.delete(booking_to_delete)
+        else:
+            raise Exception("Booking not found")
+
         db_session.commit()
     except Exception as e:
+        db_session.rollback()
         print(e)
         raise
 
@@ -77,6 +86,7 @@ def delete_crew_by_id(db_session, crew_id, cascade = False):
         Crew.query.filter_by(crew_id=crew_id).delete()
         db_session.commit()
     except Exception as e:
+        db_session.rollback()
         print(e)
         raise
 
@@ -94,6 +104,7 @@ def delete_crewrole_by_id(db_session, crewrole_id, cascade = False):
         CrewRole.query.filter_by(role_id=crewrole_id).delete()
         db_session.commit()
     except Exception as e:
+        db_session.rollback()
         print(e)
         raise
 
@@ -103,6 +114,7 @@ def delete_flightcrewassignment_by_id(db_session, flightcrewassignment_id):
         db_session.commit()
         return True
     except Exception as e:
+        db_session.rollback()
         print(e)
         raise
 
@@ -124,6 +136,7 @@ def delete_flight_by_id(db_session, flight_id, cascade = False):
         Flight.query.filter_by(flight_id=flight_id).delete()
         db_session.commit()
     except Exception as e:
+        db_session.rollback()
         print(e)
         raise
 
@@ -133,14 +146,433 @@ def delete_passenger_by_id(db_session, passenger_id):
         db_session.commit()
         return True
     except Exception as e:
+        db_session.rollback()
         print(e)
         raise
 
-def delete_paymnet_by_id(db_session, payment_id, cascade = False):
+def delete_payment_by_id(db_session, payment_id, cascade = False):
     try:
         Payment.query.filter_by(payment_id=payment_id).delete()
         db_session.commit()
         return True
+    except Exception as e:
+        db_session.rollback()
+        print(e)
+        raise
+
+def create_user(db_session, first_name, last_name, email, hashed_password, phone, address, booking_ref):
+    try:
+        user = User(
+            first_name=first_name,
+            last_name=last_name,
+            email=email,
+            password=hashed_password,
+            phone=phone,
+            address=address,
+            booking_ref=booking_ref
+        )
+        db_session.add(user)
+        db_session.commit()
+        return user
+    except Exception as e:
+        db_session.rollback()
+        print(e)
+        raise
+
+def create_airline(db_session, airline_name, contact_email, contact_phone, flight_ref):
+    try:
+        airline = Airline(
+            airline_name = airline_name,
+            contact_email = contact_email,
+            contact_phone = contact_phone,
+            flight_ref = flight_ref
+        )
+        db_session.add(airline)
+        db_session.commit()
+        return airline
+    except Exception as e:
+        db_session.rollback()
+        print(e)
+        raise
+
+def create_flight(db_session, airline_id, flight_number, departure_airport, arrival_airport,
+                  departure_time, arrival_time, aircraft_type, num_seats, price_per_seat):
+    try:
+        flight = Flight(
+            airline_id=airline_id,
+            flight_number=flight_number,
+            departure_airport=departure_airport,
+            arrival_airport=arrival_airport,
+            departure_time=departure_time,
+            arrival_time=arrival_time,
+            aircraft_type=aircraft_type,
+            num_seats=num_seats,
+            price_per_seat=price_per_seat
+        )
+        db_session.add(flight)
+        db_session.commit()
+        return flight
+    except Exception as e:
+        db_session.rollback()
+        print(e)
+        raise
+
+def create_crew(db_session, first_name, last_name, flight_crew_assignment_ref):
+    try:
+        crew = Crew(
+            first_name=first_name,
+            last_name=last_name,
+            flight_crew_assignment_ref=flight_crew_assignment_ref
+        )
+        db_session.add(crew)
+        db_session.commit()
+        return crew
+    except Exception as e:
+        db_session.rollback()
+        print(e)
+        raise
+
+def create_crew_role(db_session, role_name, flight_crew_assignment_ref):
+    try:
+        crew_role = CrewRole(
+            role_name=role_name,
+            flight_crew_assignment_ref=flight_crew_assignment_ref
+        )
+        db_session.add(crew_role)
+        db_session.commit()
+        return crew_role
+    except Exception as e:
+        db_session.rollback()
+        print(e)
+        raise
+
+def create_booking(db_session, user_id):
+    try:
+        booking = Booking(
+            user_id=user_id
+        )
+        db_session.add(booking)
+        db_session.commit()
+        return booking
+    except Exception as e:
+        db_session.rollback()
+        print(e)
+        raise
+
+def create_booking_detail(db_session, booking_id, flight_id, booking_date, num_passengers, total_cost):
+    try:
+        booking_detail = BookingDetail(
+            booking_id=booking_id,
+            flight_id=flight_id,
+            booking_date=booking_date,
+            num_passengers=num_passengers,
+            total_cost=total_cost
+        )
+        db_session.add(booking_detail)
+        db_session.commit()
+        return booking_detail
+    except Exception as e:
+        db_session.rollback()
+        print(e)
+        raise
+
+def create_passenger(db_session, booking_details_id, first_name, last_name, date_of_birth):
+    try:
+        passenger = Passenger(
+            booking_details_id=booking_details_id,
+            first_name=first_name,
+            last_name=last_name,
+            date_of_birth=date_of_birth
+        )
+        db_session.add(passenger)
+        db_session.commit()
+        return passenger
+    except Exception as e:
+        db_session.rollback()
+        print(e)
+        raise
+
+def create_payment(db_session, booking_details_id, payment_date, amount, payment_method):
+    try:
+        payment = Payment(
+            booking_details_id=booking_details_id,
+            payment_date=payment_date,
+            amount=amount,
+            payment_method=payment_method
+        )
+        db_session.add(payment)
+        db_session.commit()
+        return payment
+    except Exception as e:
+        db_session.rollback()
+        print(e)
+        raise
+
+def create_flight_crew_assignment(db_session, flight_id, crew_id, role_id):
+    try:
+        flight_crew_assignment = FlightCrewAssignment(
+            flight_id=flight_id,
+            crew_id=crew_id,
+            role_id=role_id
+        )
+        db_session.add(flight_crew_assignment)
+        db_session.commit()
+        return flight_crew_assignment
+    except Exception as e:
+        db_session.rollback()
+        print(e)
+        raise
+
+def update_user(db_session, user):
+    try:
+        db_session.merge(user)
+        db_session.commit()
+        return user
+    except Exception as e:
+        db_session.rollback()
+        print(e)
+        raise
+
+def update_airline(db_session, airline):
+    try:
+        db_session.merge(airline)
+        db_session.commit()
+        return airline
+    except Exception as e:
+        db_session.rollback()
+        print(e)
+        raise
+
+def update_flight(db_session, flight):
+    try:
+        db_session.merge(flight)
+        db_session.commit()
+        return flight
+    except Exception as e:
+        db_session.rollback()
+        print(e)
+        raise
+
+def update_crew(db_session, crew):
+    try:
+        db_session.merge(crew)
+        db_session.commit()
+        return crew
+    except Exception as e:
+        db_session.rollback()
+        print(e)
+        raise
+
+def update_crewrole(db_session, crewrole):
+    try:
+        db_session.merge(crewrole)
+        db_session.commit()
+        return crewrole
+    except Exception as e:
+        db_session.rollback()
+        print(e)
+        raise
+
+def update_booking(db_session, booking):
+    try:
+        db_session.merge(booking)
+        db_session.commit()
+        return booking
+    except Exception as e:
+        db_session.rollback()
+        print(e)
+        raise
+
+def update_booking_detail(db_session, booking_detail):
+    try:
+        db_session.merge(booking_detail)
+        db_session.commit()
+        return booking_detail
+    except Exception as e:
+        print(e)
+        raise
+
+def update_passenger(db_session, passenger):
+    try:
+        db_session.merge(passenger)
+        db_session.commit()
+        return passenger
+    except Exception as e:
+        db_session.rollback()
+        print(e)
+        raise
+
+def update_payment(db_session, payment):
+    try:
+        db_session.merge(payment)
+        db_session.commit()
+        return payment
+    except Exception as e:
+        db_session.rollback()
+        print(e)
+        raise
+
+def update_flightcrewassignment(db_session, flightcrewassignment):
+    try:
+        db_session.merge(flightcrewassignment)
+        db_session.commit()
+        return flightcrewassignment
+    except Exception as e:
+        db_session.rollback()
+        print(e)
+        raise
+
+def get_user_by_id(db_session, user_id=None):
+    try:
+        if user_id is None:
+            return User.query.all()
+        return User.query.filter_by(user_id=user_id).first()
+    except Exception as e:
+
+        print(e)
+        raise
+
+def get_airline_by_id(db_session, airline_id=None):
+    try:
+        if airline_id is None:
+            return Airline.query.all()
+        return Airline.query.filter_by(airline_id=airline_id).first()
+    except Exception as e:
+        print(e)
+        raise
+
+def get_booking_detail_by_id(db_session, booking_detail_id=None):
+    try:
+        if booking_detail_id is None:
+            return BookingDetail.query.all()
+        return BookingDetail.query.filter_by(booking_details_id=booking_detail_id).first()
+    except Exception as e:
+        print(e)
+        raise
+
+def get_booking_by_id(db_session, booking_id=None):
+    try:
+        if booking_id is None:
+            return Booking.query.all()
+        return Booking.query.filter_by(booking_id=booking_id).first()
+    except Exception as e:
+        print(e)
+        raise
+
+def get_crew_by_id(db_session, crew_id=None):
+    try:
+        if crew_id is None:
+            return Crew.query.all()
+        return Crew.query.filter_by(crew_id=crew_id).first()
+    except Exception as e:
+        print(e)
+        raise
+
+def get_crewrole_by_id(db_session, crewrole_id=None):
+    try:
+        if crewrole_id is None:
+            return CrewRole.query.all()
+        return CrewRole.query.filter_by(role_id=crewrole_id).first()
+    except Exception as e:
+        print(e)
+        raise
+
+def get_flightcrewassignment_by_id(db_session, flightcrewassignment_id=None):
+    try:
+        if flightcrewassignment_id is None:
+            return FlightCrewAssignment.query.all()
+        return FlightCrewAssignment.query.filter_by(id=flightcrewassignment_id).first()
+    except Exception as e:
+        print(e)
+        raise
+
+def get_flight_by_id(db_session, flight_id=None):
+    try:
+        if flight_id is None:
+            return Flight.query.all()
+        return Flight.query.filter_by(flight_id=flight_id).first()
+    except Exception as e:
+        print(e)
+        raise
+
+def get_passenger_by_id(db_session, passenger_id=None):
+    try:
+        if passenger_id is None:
+            return Passenger.query.all()
+        return Passenger.query.filter_by(passenger_id=passenger_id).first()
+    except Exception as e:
+        print(e)
+        raise
+
+def get_payment_by_id(db_session, payment_id=None):
+    try:
+        if payment_id is None:
+            return Payment.query.all()
+        return Payment.query.filter_by(payment_id=payment_id).first()
+    except Exception as e:
+        print(e)
+        raise
+
+
+def get_flights_by_airline_id(db_session, airline_id):
+    try:
+        return Flight.query.filter_by(airline_id=airline_id).all()
+    except Exception as e:
+        print(e)
+        raise
+
+def get_booking_details_by_booking_id(db_session, booking_id):
+    try:
+        return BookingDetail.query.filter_by(booking_id=booking_id).all()
+    except Exception as e:
+        print(e)
+        raise
+
+def get_booking_details_by_flight_id(db_session, flight_id):
+    try:
+        return BookingDetail.query.filter_by(flight_id=flight_id).all()
+    except Exception as e:
+        print(e)
+        raise
+
+def get_passengers_by_booking_detail_id(db_session, booking_details_id):
+    try:
+        return Passenger.query.filter_by(booking_details_id=booking_details_id).all()
+    except Exception as e:
+        print(e)
+        raise
+
+def get_payments_by_booking_detail_id(db_session, booking_details_id):
+    try:
+        return Payment.query.filter_by(booking_details_id=booking_details_id).all()
+    except Exception as e:
+        print(e)
+        raise
+
+def get_flightcrewassignments_by_flight_id(db_session, flight_id):
+    try:
+        return FlightCrewAssignment.query.filter_by(flight_id=flight_id).all()
+    except Exception as e:
+        print(e)
+        raise
+
+def get_flightcrewassignments_by_crew_id(db_session, crew_id):
+    try:
+        return FlightCrewAssignment.query.filter_by(crew_id=crew_id).all()
+    except Exception as e:
+        print(e)
+        raise
+
+def get_flightcrewassignments_by_role_id(db_session, role_id):
+    try:
+        return FlightCrewAssignment.query.filter_by(role_id=role_id).all()
+    except Exception as e:
+        print(e)
+        raise
+
+def get_bookings_by_user_id(db_session, user_id):
+    try:
+        return Booking.query.filter_by(user_id=user_id).all()
     except Exception as e:
         print(e)
         raise

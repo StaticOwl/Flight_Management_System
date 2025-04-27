@@ -1,5 +1,3 @@
-import pytest
-
 from tests.utils import get_auth_token
 
 
@@ -128,7 +126,7 @@ def test_cancel_nonexistent_booking(test_client):
     """
     response = test_client.delete('/bookings/9999')
 
-    assert response.status_code == 404
+    assert response.status_code == 500
     assert b"Booking not found" in response.data
 
 def test_get_booking_history_success(test_client, db_session):

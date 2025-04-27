@@ -1,5 +1,3 @@
-import pytest
-
 def test_create_flight_success(test_client, db_session):
     """
     GIVEN a valid airline and flight details

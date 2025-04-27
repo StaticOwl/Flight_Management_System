@@ -1,0 +1,28 @@
+services:
+  - type: static_site
+    name: flight-management-frontend
+    env: static
+    buildCommand: npm install && npm run build
+    staticPublishPath: build
+    rootDir: frontend
+    plan: free
+    branch: main
+    envVars:
+      - key: REACT_APP_API_URL
+        value: https://flight-management-system-g5.onrender.com
+
+  - type: web
+    name: flight-management-backend
+    env: docker
+    rootDir: backend
+    plan: free
+    branch: main
+    envVars:
+      - key: FLASK_APP
+        value: src.app
+      - key: FLASK_ENV
+        value: production
+      - key: FLASK_DEBUG
+        value: "0"
+      - key: DATABASE_URL
+        sync: false

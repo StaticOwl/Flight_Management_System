@@ -1,6 +1,3 @@
-import pytest
-
-
 def test_get_airlines_success(test_client):
     """
     GIVEN that airlines exist in the database

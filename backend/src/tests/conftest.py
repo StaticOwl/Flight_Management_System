@@ -1,7 +1,8 @@
-import pytest
+import os
 import sys
 
-import os
+import pytest
+
 os.environ['FLASK_ENV'] = 'test'
 os.environ['DATABASE_URL'] = 'sqlite:///:memory:'
 
@@ -10,12 +11,12 @@ import sqlalchemy
 # Ensure `main/` is in the import path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../main/")))
 
-from main.__init__ import create_app, db
+from main import create_app, db
 
 @pytest.fixture(scope='session')
 def test_app():
     """Create and configure a new Flask test app instance."""
-    app = create_app()
+    app = create_app(config_mode='test')
 
     from main.service.urls import urls_bp
     app.register_blueprint(urls_bp)

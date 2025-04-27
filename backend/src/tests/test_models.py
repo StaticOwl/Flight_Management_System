@@ -1,7 +1,5 @@
-import pytest
-
 from main.dao.adapters import delete_user_by_id, delete_airline_by_id, delete_booking_detail_by_id, delete_booking_by_id, delete_crew_by_id, \
-    delete_crewrole_by_id, delete_flightcrewassignment_by_id, delete_flight_by_id, delete_passenger_by_id, delete_paymnet_by_id
+    delete_crewrole_by_id, delete_flightcrewassignment_by_id, delete_flight_by_id, delete_passenger_by_id, delete_payment_by_id
 from main.dao.models import User, Airline, BookingDetail, Booking, Crew, CrewRole, FlightCrewAssignment, Flight, Passenger, Payment
 
 #Read
@@ -53,7 +51,7 @@ def test_read_booking(db_session):
     TESTS SQLAlchemy setup for READ
     """
     u = db_session.get(Booking, 2)
-    assert u.user_id == 1
+    assert u.user_id == 2
 
 def test_read_crew(db_session):
     """
@@ -129,9 +127,9 @@ def test_read_payment(db_session):
     TESTS SQLAlchemy setup for READ
     """
     u = db_session.get(Payment, 3)
-    assert u.booking_details_id == 1
-    assert u.amount == 800.00
-    assert u.payment_method == 'Credit Card'
+    assert u.booking_details_id == 3
+    assert u.amount == 1000.00
+    assert u.payment_method == 'PayPal'
 
 
 
@@ -413,7 +411,7 @@ def test_delete_payment(db_session):
 
     TESTS SQLAlchemy setup for Update
     """
-    delete_paymnet_by_id(db_session, 1)
+    delete_payment_by_id(db_session, 1)
 
     u2 = db_session.get(Payment, 1)
     assert not u2

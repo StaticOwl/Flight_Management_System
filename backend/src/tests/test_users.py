@@ -1,5 +1,8 @@
-import pytest
+from datetime import timedelta, datetime
 
+import jwt
+
+from service.controllers import SECRET_KEY
 from tests.utils import get_auth_token
 
 
@@ -126,6 +129,33 @@ def test_extract_user_id_from_token(test_client, db_session):
 
     assert response.status_code == 200
     assert response.json['user_id'] == 1
+
+def test_extract_user_id_from_token_expired(test_client):
+    """
+    GIVEN an expired token
+    WHEN the "/token" endpoint is accessed
+    THEN a 401 with 'Token has expired' should be returned
+    """
+    expired_token = jwt.encode({
+        'user_id': 1,
+        'exp': datetime.now() - timedelta(hours=1)
+    }, SECRET_KEY, algorithm="HS256")
+
+    response = test_client.get('/token', headers={"Authorization": f"Bearer {expired_token}"})
+
+    assert response.status_code == 401
+    assert 'Token has expired' in response.json['message']
+
+def test_extract_user_id_from_token_invalid_format(test_client):
+    """
+    GIVEN an improperly formatted token
+    WHEN the "/token" endpoint is accessed
+    THEN a 401 should be returned for invalid token
+    """
+    response = test_client.get('/token', headers={"Authorization": "Bearer invalid.token.value"})
+
+    assert response.status_code == 401
+    assert 'Invalid token' in response.json['message']
 
 def test_delete_user_success(test_client, db_session):
     """
