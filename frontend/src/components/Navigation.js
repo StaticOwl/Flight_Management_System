@@ -1,6 +1,6 @@
 // In Navigation.js
-import React, { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, {useEffect, useState} from 'react';
+import {Link, useNavigate} from 'react-router-dom';
 import ApiService from '../api/ApiService';
 import '../App.css';
 

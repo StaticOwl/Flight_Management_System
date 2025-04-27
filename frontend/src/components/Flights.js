@@ -1,6 +1,6 @@
-import React, {useState, useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import ApiService from '../api/ApiService';
-import '../App.css';  // Ensure this is the path to your CSS
+import '../App.css'; // Ensure this is the path to your CSS
 
 function Flights() {
     const [flights, setFlights] = useState([]);
