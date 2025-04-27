@@ -20,10 +20,10 @@ definitions:
           - cd src
           - python -m pytest tests/ --cov=main --cov-report=xml --cov-report=term
           - |
-            coverage=$(python -c "import xml.etree.ElementTree as ET; tree = ET.parse('coverage.xml'); root = tree.getroot(); print(float(root.attrib['line-rate']) * 100)") 
+            coverage=$(python -c "import xml.etree.ElementTree as ET; tree = ET.parse('coverage.xml'); root = tree.getroot(); print(float(root.attrib['line-rate']) * 100)")
             if (( $(echo "$coverage < 90" | bc -l) )); then 
-              echo "Coverage is below 90%. Current coverage: $coverage%" 
-              exit 1 
+              echo "Coverage is below 90%. Current coverage: $coverage%"
+              exit 1
             fi
 
     - step: &frontend-setup-and-test
@@ -40,63 +40,19 @@ definitions:
         name: Deploy Backend to Render
         script:
           - echo "Deploying Backend to Render..."
-          - |
-            deploy_response=$(curl -s -X POST "https://api.render.com/v1/services/$RENDER_BACKEND_SERVICE_ID/deploys" \
-              -H "Accept: application/json" \
-              -H "Authorization: Bearer $RENDER_API_KEY")
-            deploy_id=$(echo "$deploy_response" | jq -r '.id')
-            echo "Triggered Deploy ID: $deploy_id"
-
-            # Poll deployment status
-            while true; do
-              status=$(curl -s -X GET "https://api.render.com/v1/deploys/$deploy_id" \
-                -H "Accept: application/json" \
-                -H "Authorization: Bearer $RENDER_API_KEY" | jq -r '.status')
-
-              echo "Deployment Status: $status"
-
-              if [ "$status" == "live" ]; then
-                echo "✅ Backend deploy successful!"
-                break
-              elif [[ "$status" == "failed" || "$status" == "canceled" ]]; then
-                echo "❌ Backend deploy failed!"
-                exit 1
-              else
-                echo "⏳ Deployment still in progress... waiting 10 seconds..."
-                sleep 10
-              fi
-            done
+          - >
+            curl -X POST "https://api.render.com/v1/services/$RENDER_BACKEND_SERVICE_ID/deploys" 
+            -H "Accept: application/json" 
+            -H "Authorization: Bearer $RENDER_API_KEY"
 
     - step: &deploy-frontend
         name: Deploy Frontend to Render
         script:
           - echo "Deploying Frontend to Render..."
-          - |
-            deploy_response=$(curl -s -X POST "https://api.render.com/v1/services/$RENDER_FRONTEND_SERVICE_ID/deploys" \
-              -H "Accept: application/json" \
-              -H "Authorization: Bearer $RENDER_API_KEY")
-            deploy_id=$(echo "$deploy_response" | jq -r '.id')
-            echo "Triggered Deploy ID: $deploy_id"
-
-            # Poll deployment status
-            while true; do
-              status=$(curl -s -X GET "https://api.render.com/v1/deploys/$deploy_id" \
-                -H "Accept: application/json" \
-                -H "Authorization: Bearer $RENDER_API_KEY" | jq -r '.status')
-
-              echo "Deployment Status: $status"
-
-              if [ "$status" == "live" ]; then
-                echo "✅ Frontend deploy successful!"
-                break
-              elif [[ "$status" == "failed" || "$status" == "canceled" ]]; then
-                echo "❌ Frontend deploy failed!"
-                exit 1
-              else
-                echo "⏳ Deployment still in progress... waiting 10 seconds..."
-                sleep 10
-              fi
-            done
+          - >
+            curl -X POST "https://api.render.com/v1/services/$RENDER_FRONTEND_SERVICE_ID/deploys" 
+            -H "Accept: application/json" 
+            -H "Authorization: Bearer $RENDER_API_KEY"
 
 pipelines:
   branches:
