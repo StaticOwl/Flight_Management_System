@@ -1,7 +1,5 @@
+from flask import Blueprint
 from flask import request, jsonify
-
-from service.middleware import role_required
-
 
 from service.controllers import (
     list_all_controller,
@@ -30,8 +28,7 @@ from service.controllers import (
     fetch_users_controller,
     update_user_controller
 )
-
-from flask import Blueprint
+from service.middleware import role_required
 
 urls_bp = Blueprint("urls", __name__)  # Create a Blueprint
 

@@ -1,5 +1,3 @@
-import pytest
-
 def test_fetch_roles_success(test_client):
     """
     GIVEN a Flask application configured for testing

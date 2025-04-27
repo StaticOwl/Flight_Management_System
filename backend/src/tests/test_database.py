@@ -1,10 +1,16 @@
-import pytest
 from datetime import datetime
-from flask import current_app
 from main.dao.models import (
-    User, Airline, Flight, BookingDetail
+    User, Airline, Flight
 )
 from sqlalchemy import inspect
+from datetime import datetime
+
+from sqlalchemy import inspect
+
+from main.dao.models import (
+    User, Airline, Flight
+)
+
 
 def test_database_tables_exist(db_session):
     """Test if all database tables were created"""
