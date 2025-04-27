@@ -10,7 +10,7 @@ import sqlalchemy
 # Ensure `main/` is in the import path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../main/")))
 
-from main.__init__ import create_app, db
+from main import create_app, db
 
 @pytest.fixture(scope='session')
 def test_app():
